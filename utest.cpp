@@ -10,8 +10,20 @@ TEST(first, test)
 {
     Botan::LibraryInitializer init;
     Botan::AutoSeeded_RNG rng;
-    std::cout << "hello world" << rng.next_byte() << std::endl;
-    FAIL("Start here");
+
+    auto prev = rng.next_byte();
+    auto cur = prev;
+    for (int i = 0; i < 100; ++i) {
+
+        cur = rng.next_byte();
+
+        if (cur != prev)
+            break;
+
+        prev = cur;
+    }
+
+    CHECK(cur != prev);
 }
 
 int main(int argc, char **argv)
