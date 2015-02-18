@@ -15,3 +15,4 @@ add_executable(
     utest.cpp
 )
 target_link_libraries(utest CppUTest)
+target_link_libraries(utest botan)
