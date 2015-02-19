@@ -3,10 +3,11 @@
 #include <botan/init.h>
 #include <iostream>
 
-TEST_GROUP(first)
-{};
+TEST_GROUP(botan)
+{
+};
 
-TEST(first, test)
+TEST(botan, rng_gives_different_numbers)
 {
     Botan::LibraryInitializer init;
     Botan::AutoSeeded_RNG rng;
