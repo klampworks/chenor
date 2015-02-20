@@ -42,6 +42,15 @@ TEST(botan, rng_gives_different_numbers)
     CHECK(cur != prev);
 }
 
+TEST(botan, fake_rng_gives_fixed_number)
+{
+    Botan::LibraryInitializer init;
+    Botan::fake_rng rng;
+
+    CHECK_EQUAL(rng.next_byte(), rng.next_byte());
+    CHECK_EQUAL(6, rng.next_byte());
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
