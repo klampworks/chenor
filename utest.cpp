@@ -26,10 +26,13 @@ namespace Botan {
     };
 }
 
-#define MK_FAKE_RNG(name) \
+#define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
+#define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
+
+#define MK_FAKE_RNG(name, n) \
     Botan::SecureVector<byte> in; \
     for (int i = 0; i < 10000; ++i) \
-        in.push_back(6); \
+        in.push_back(n); \
  \
     Fixed_Output_RNG name(in);
 
