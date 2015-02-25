@@ -56,7 +56,7 @@ TEST(botan, create_key)
     MK_FAKE_RNG_INC(rng);
 
     auto private_key = Botan::RSA_PrivateKey(rng, 1024);
-    //auto public_key = Botan::X509::PEM_encode(private_key);
+    auto public_key = Botan::X509::PEM_encode(private_key);
 }
 
 int main(int argc, char **argv)
