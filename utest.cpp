@@ -5,7 +5,7 @@
 #include <iostream>
 #include <botan/rsa.h>
 #include <botan/pkcs8.h>
-#include "botan/Botan-1.10.5/checks/common.h"
+#include "Fixed_Output_RNG.hpp"
 
 #define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
 #define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
