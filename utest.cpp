@@ -50,13 +50,23 @@ TEST(botan, fake_rng_gives_fixed_number)
     CHECK_EQUAL(6, rng.next_byte());
 }
 
+template <typename K>
+std::pair<std::string, std::string> serialise_key(const K &key)
+{
+    return {
+        Botan::X509::PEM_encode(key),
+        Botan::PKCS8::PEM_encode(key)};
+}
+
 TEST(botan, create_key)
 {
     Botan::LibraryInitializer init;
     MK_FAKE_RNG_INC(rng);
 
     auto private_key = Botan::RSA_PrivateKey(rng, 1024);
-    auto public_key = Botan::X509::PEM_encode(private_key);
+    //std::string public_key_s = Botan::X509::PEM_encode(private_key);
+    //std::string private_key_s = Botan::PKCS8::PEM_encode(private_key);
+    auto s = serialise_key(private_key);
 }
 
 int main(int argc, char **argv)
