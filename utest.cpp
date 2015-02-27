@@ -58,15 +58,27 @@ std::pair<std::string, std::string> serialise_key(const K &key)
         Botan::PKCS8::PEM_encode(key)};
 }
 
+void print_keys(const std::pair<std::string, std::string> &keys_s)
+{
+    std::cout << "################################################################################" << std::endl;
+    std::cout << keys_s.first;
+    std::cout << "################################################################################" << std::endl;
+
+    std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+    std::cout << keys_s.second;
+    std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+}
+
+#include <iostream>
 TEST(botan, create_key)
 {
     Botan::LibraryInitializer init;
     MK_FAKE_RNG_INC(rng);
 
     auto private_key = Botan::RSA_PrivateKey(rng, 1024);
-    //std::string public_key_s = Botan::X509::PEM_encode(private_key);
-    //std::string private_key_s = Botan::PKCS8::PEM_encode(private_key);
-    auto s = serialise_key(private_key);
+    auto keys_s = serialise_key(private_key);
+    print_keys(keys_s);
+
 }
 
 int main(int argc, char **argv)
