@@ -6,6 +6,7 @@
 #include <botan/rsa.h>
 #include <botan/pkcs8.h>
 #include "Fixed_Output_RNG.hpp"
+#include <iostream>
 
 #define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
 #define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
@@ -16,6 +17,34 @@
         in.push_back(n); \
  \
     Fixed_Output_RNG name(in);
+
+template <typename K>
+std::pair<std::string, std::string> serialise_key(const K &key)
+{
+    return {
+        Botan::X509::PEM_encode(key), //Public Key
+        Botan::PKCS8::PEM_encode(key) //Private Key
+    };
+}
+
+void print_keys(const std::pair<std::string, std::string> &keys_s)
+{
+    std::cout << 
+        "########################################" <<
+        "########################################" << 
+        keys_s.first <<
+        "########################################" <<
+        "########################################" << 
+        std::endl;
+
+    std::cout << 
+        "<@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << 
+        "<@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << 
+        keys_s.second <<
+        "<@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << 
+        "<@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << 
+        std::endl;
+}
 
 TEST_GROUP(botan)
 {
@@ -48,27 +77,6 @@ TEST(botan, fake_rng_gives_fixed_number)
 
     CHECK_EQUAL(rng.next_byte(), rng.next_byte());
     CHECK_EQUAL(6, rng.next_byte());
-}
-
-template <typename K>
-std::pair<std::string, std::string> serialise_key(const K &key)
-{
-    return {
-        Botan::X509::PEM_encode(key), //Public Key
-        Botan::PKCS8::PEM_encode(key) //Private Key
-    };
-}
-
-#include <iostream>
-void print_keys(const std::pair<std::string, std::string> &keys_s)
-{
-    std::cout << "################################################################################" << std::endl;
-    std::cout << keys_s.first;
-    std::cout << "################################################################################" << std::endl;
-
-    std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-    std::cout << keys_s.second;
-    std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
 }
 
 TEST(botan, create_key)
