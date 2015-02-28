@@ -54,8 +54,9 @@ template <typename K>
 std::pair<std::string, std::string> serialise_key(const K &key)
 {
     return {
-        Botan::X509::PEM_encode(key),
-        Botan::PKCS8::PEM_encode(key)};
+        Botan::X509::PEM_encode(key), //Public Key
+        Botan::PKCS8::PEM_encode(key) //Private Key
+    };
 }
 
 #include <iostream>
