@@ -5,6 +5,7 @@
 #include <iostream>
 #include <botan/rsa.h>
 #include <botan/pkcs8.h>
+#include <botan/pubkey.h>
 #include "Fixed_Output_RNG.hpp"
 #include <iostream>
 
@@ -114,6 +115,31 @@ TEST(botan, create_key)
     auto keys_s = serialise_key(private_key);
 
     CHECK_EQUAL(exp_priv_key, keys_s.second);
+}
+
+TEST(botan, encrypt_decrypt)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    auto private_key = Botan::RSA_PrivateKey(rng, 1024);
+    auto keys_s = serialise_key(private_key);
+
+    // Private Key class inherits from Public key class.
+    Botan::RSA_PublicKey *public_key = &private_key;
+
+    Botan::PK_Encryptor_EME pke(*public_key, std::string("EME1(SHA-256)"));
+
+    //const Botan::SecureVector<byte> v;
+    //const std::string s("hello");
+    //std::copy(s.begin(), s.end(), v.begin());
+
+    auto res = pke.encrypt((byte*)"hello", strlen("hello"), rng);
+    std::cout << "<" << res << ">" << std::endl;
+
+    Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
+    auto res2 = pkd.decrypt(res);
+    std::cout << "<" << res2 << ">" << std::endl;
 }
 
 int main(int argc, char **argv)
