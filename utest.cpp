@@ -117,6 +117,36 @@ TEST(botan, create_key)
     CHECK_EQUAL(exp_priv_key, keys_s.second);
 }
 
+TEST(botan, encrypt_cstring)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    // Private Key class inherits from Public key class.
+    Botan::RSA_PrivateKey private_key(rng, 1024);
+    Botan::RSA_PublicKey *public_key = &private_key;
+
+    Botan::PK_Encryptor_EME pke(*public_key, std::string("EME1(SHA-256)"));
+
+    const char *plain = "hello";
+
+    // The ciphertext is huge because it is padded.
+    const char *exp_cipher_hex = 
+        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
+        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
+        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
+        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0";
+
+    auto exp_cipher = Botan::hex_decode(exp_cipher_hex, strlen(exp_cipher_hex));
+
+    auto cipher = pke.encrypt((byte*)plain, strlen(plain), rng);
+    auto cipher_hex = Botan::hex_encode(cipher, true);
+
+    CHECK_EQUAL(cipher, exp_cipher);
+    CHECK_EQUAL(cipher_hex, exp_cipher_hex);
+}
+
+#if 0
 TEST(botan, encrypt_decrypt)
 {
     Botan::LibraryInitializer init;
@@ -141,6 +171,7 @@ TEST(botan, encrypt_decrypt)
     auto res2 = pkd.decrypt(res);
     std::cout << "<" << res2 << ">" << std::endl;
 }
+#endif
 
 int main(int argc, char **argv)
 {
