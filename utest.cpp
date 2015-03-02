@@ -146,6 +146,31 @@ TEST(botan, encrypt_cstring)
     CHECK_EQUAL(cipher_hex, exp_cipher_hex);
 }
 
+TEST(botan, decrypt_cstring)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    Botan::RSA_PrivateKey private_key(rng, 1024);
+
+    Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
+
+    const char *exp_plain_str = "hello";
+
+    // The ciphertext is huge because it is padded.
+    const char *cipher_hex = 
+        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
+        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
+        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
+        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0";
+    Botan::SecureVector<byte> cipher = 
+        Botan::hex_decode(cipher_hex, strlen(cipher_hex), true);
+
+    auto plain = pkd.decrypt(cipher);
+    const char *plain_str = (char*)&(plain[0]);
+    CHECK(strcmp(exp_plain_str, plain_str) == 0);
+}
+
 #if 0
 TEST(botan, encrypt_decrypt)
 {
