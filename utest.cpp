@@ -171,33 +171,6 @@ TEST(botan, decrypt_cstring)
     CHECK(strcmp(exp_plain_str, plain_str) == 0);
 }
 
-#if 0
-TEST(botan, encrypt_decrypt)
-{
-    Botan::LibraryInitializer init;
-    MK_FAKE_RNG_INC(rng);
-
-    auto private_key = Botan::RSA_PrivateKey(rng, 1024);
-    auto keys_s = serialise_key(private_key);
-
-    // Private Key class inherits from Public key class.
-    Botan::RSA_PublicKey *public_key = &private_key;
-
-    Botan::PK_Encryptor_EME pke(*public_key, std::string("EME1(SHA-256)"));
-
-    //const Botan::SecureVector<byte> v;
-    //const std::string s("hello");
-    //std::copy(s.begin(), s.end(), v.begin());
-
-    auto res = pke.encrypt((byte*)"hello", strlen("hello"), rng);
-    std::cout << "<" << res << ">" << std::endl;
-
-    Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
-    auto res2 = pkd.decrypt(res);
-    std::cout << "<" << res2 << ">" << std::endl;
-}
-#endif
-
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
