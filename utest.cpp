@@ -85,7 +85,7 @@ TEST(botan, create_key)
     Botan::LibraryInitializer init;
     MK_FAKE_RNG_INC(rng);
 
-    std::string exp_pub_key(
+    std::string exp_pub_key_s(
 "-----BEGIN PUBLIC KEY-----\n"
 "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0VggrwctJPKaH4bUCzBHVFtgZ\n"
 "3SLsOg1nSLKmJC3D55nbrhIIkrFlsJMOItIdBImtcNTags6/VZJ3BDscqeoRnyCx\n"
@@ -93,7 +93,7 @@ TEST(botan, create_key)
 "P013vRyVJc2LXkbTXwIDAQAB\n"
 "-----END PUBLIC KEY-----\n"
 );
-    std::string exp_priv_key(
+    std::string exp_priv_key_s(
 "-----BEGIN PRIVATE KEY-----\n"
 "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALRWCCvBy0k8pofh\n"
 "tQLMEdUW2BndIuw6DWdIsqYkLcPnmduuEgiSsWWwkw4i0h0Eia1w1NqCzr9VkncE\n"
@@ -111,10 +111,13 @@ TEST(botan, create_key)
 "tPYBF5juSffiWg==\n"
 "-----END PRIVATE KEY-----\n"
 );
-    auto private_key = Botan::RSA_PrivateKey(rng, 1024);
-    auto keys_s = serialise_key(private_key);
+    Botan::RSA_PrivateKey private_key(rng, 1024);
 
-    CHECK_EQUAL(exp_priv_key, keys_s.second);
+    const std::string pub_key_s(Botan::X509::PEM_encode(private_key));
+    const std::string priv_key_s(Botan::PKCS8::PEM_encode(private_key));
+
+    CHECK_EQUAL(exp_priv_key_s, priv_key_s);
+    CHECK_EQUAL(exp_pub_key_s, pub_key_s);
 }
 
 TEST(botan, encrypt_cstring)
