@@ -19,15 +19,6 @@
  \
     Fixed_Output_RNG name(in);
 
-template <typename K>
-std::pair<std::string, std::string> serialise_key(const K &key)
-{
-    return {
-        Botan::X509::PEM_encode(key), //Public Key
-        Botan::PKCS8::PEM_encode(key) //Private Key
-    };
-}
-
 void print_keys(const std::pair<std::string, std::string> &keys_s)
 {
     std::cout << 
