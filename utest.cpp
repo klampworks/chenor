@@ -177,17 +177,17 @@ TEST(botan, encrypt_stdstring)
         "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
         "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0");
 
-    Botan::SecureVector<byte> exp_cipher = Botan::hex_decode(
-        exp_cipher_hex, true);
+    const Botan::SecureVector<byte> exp_cipher = 
+        Botan::hex_decode(exp_cipher_hex, true);
 
-    Botan::RSA_PrivateKey private_key(rng, 1024);
-    Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
+    const Botan::RSA_PrivateKey private_key(rng, 1024);
+    const Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
 
     const std::string plain_s("hello");
-    Botan::SecureVector<byte> plain((byte*)plain_s.c_str(), plain_s.size());
+    const Botan::SecureVector<byte> plain((byte*)plain_s.c_str(), plain_s.size());
 
-    Botan::SecureVector<byte> cipher = pke.encrypt(plain, rng);
-    std::string cipher_hex = Botan::hex_encode(cipher, true);
+    const Botan::SecureVector<byte> cipher = pke.encrypt(plain, rng);
+    const std::string cipher_hex = Botan::hex_encode(cipher, true);
 
     CHECK_EQUAL(exp_cipher_hex, cipher_hex);
     CHECK_EQUAL(exp_cipher, cipher);
