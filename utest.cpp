@@ -193,6 +193,34 @@ TEST(botan, encrypt_stdstring)
     CHECK_EQUAL(exp_cipher, cipher);
 }
 
+TEST(botan, decrypt_stdstring)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    const std::string exp_plain_s("hello");
+    const Botan::SecureVector<byte> exp_plain((byte*)exp_plain_s.c_str(), exp_plain_s.size());
+
+    // The ciphertext is huge because it is padded.
+    const std::string cipher_hex(
+        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
+        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
+        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
+        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0");
+
+    const Botan::SecureVector<byte> cipher = 
+        Botan::hex_decode(cipher_hex, true);
+
+    const Botan::RSA_PrivateKey private_key(rng, 1024);
+    const Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
+
+    const Botan::SecureVector<byte> plain = pkd.decrypt(cipher);
+    const std::string plain_s(plain.begin(), plain.end());
+
+    CHECK_EQUAL(exp_plain, plain);
+    CHECK_EQUAL(exp_plain_s, exp_plain_s);
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
