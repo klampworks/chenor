@@ -38,6 +38,11 @@ void print_keys(const std::pair<std::string, std::string> &keys_s)
         std::endl;
 }
 
+Botan::SecureVector<byte> str_to_secvec(const std::string &s)
+{
+    return Botan::SecureVector<byte>((byte*)s.c_str(), s.size());
+}
+
 TEST_GROUP(botan)
 {
 };
@@ -184,7 +189,7 @@ TEST(botan, encrypt_stdstring)
     const Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
 
     const std::string plain_s("hello");
-    const Botan::SecureVector<byte> plain((byte*)plain_s.c_str(), plain_s.size());
+    const Botan::SecureVector<byte> plain = str_to_secvec(plain_s);
 
     const Botan::SecureVector<byte> cipher = pke.encrypt(plain, rng);
     const std::string cipher_hex = Botan::hex_encode(cipher, true);
@@ -199,7 +204,7 @@ TEST(botan, decrypt_stdstring)
     MK_FAKE_RNG_INC(rng);
 
     const std::string exp_plain_s("hello");
-    const Botan::SecureVector<byte> exp_plain((byte*)exp_plain_s.c_str(), exp_plain_s.size());
+    const Botan::SecureVector<byte> exp_plain = str_to_secvec(exp_plain_s);
 
     // The ciphertext is huge because it is padded.
     const std::string cipher_hex(
