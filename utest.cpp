@@ -43,6 +43,15 @@ Botan::SecureVector<byte> str_to_secvec(const std::string &s)
     return Botan::SecureVector<byte>((byte*)s.c_str(), s.size());
 }
 
+const char* hello_cipher_hex()
+{
+    // The word "hello" encrypted with a MK_FAKE_RNG_INC and RSA "EME1(SHA-256)".
+    return "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925"
+    "106B6A78BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0A"
+    "DD3E26E5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D9"
+    "35EA440E5CCB095AB2BAECB207FF6621BE3E018D4270EB0";
+}
+
 TEST_GROUP(botan)
 {
 };
@@ -130,11 +139,7 @@ TEST(botan, encrypt_cstring)
     const char *plain = "hello";
 
     // The ciphertext is huge because it is padded.
-    const char *exp_cipher_hex = 
-        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
-        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
-        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
-        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0";
+    const char *exp_cipher_hex = hello_cipher_hex();
 
     auto exp_cipher = Botan::hex_decode(exp_cipher_hex, strlen(exp_cipher_hex));
 
@@ -157,11 +162,8 @@ TEST(botan, decrypt_cstring)
     const char *exp_plain_str = "hello";
 
     // The ciphertext is huge because it is padded.
-    const char *cipher_hex = 
-        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
-        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
-        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
-        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0";
+    const char *cipher_hex = hello_cipher_hex();
+
     Botan::SecureVector<byte> cipher = 
         Botan::hex_decode(cipher_hex, strlen(cipher_hex), true);
 
@@ -176,11 +178,7 @@ TEST(botan, encrypt_stdstring)
     MK_FAKE_RNG_INC(rng);
 
     // The ciphertext is huge because it is padded.
-    const std::string exp_cipher_hex(
-        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
-        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
-        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
-        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0");
+    const std::string exp_cipher_hex = hello_cipher_hex();
 
     const Botan::SecureVector<byte> exp_cipher = 
         Botan::hex_decode(exp_cipher_hex, true);
@@ -207,11 +205,7 @@ TEST(botan, decrypt_stdstring)
     const Botan::SecureVector<byte> exp_plain = str_to_secvec(exp_plain_s);
 
     // The ciphertext is huge because it is padded.
-    const std::string cipher_hex(
-        "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925106B6A7"
-        "8BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0ADD3E26E"
-        "5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D935EA440"
-        "E5CCB095AB2BAECB207FF6621BE3E018D4270EB0");
+    const std::string cipher_hex = hello_cipher_hex();
 
     const Botan::SecureVector<byte> cipher = 
         Botan::hex_decode(cipher_hex, true);
