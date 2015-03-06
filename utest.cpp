@@ -46,6 +46,7 @@ Botan::SecureVector<byte> str_to_secvec(const std::string &s)
 const char* hello_cipher_hex()
 {
     // The word "hello" encrypted with a MK_FAKE_RNG_INC and RSA "EME1(SHA-256)".
+    // The ciphertext is huge because it is padded.
     return "0417BAB8640D30B7119ABA006B0702640B0ADE656A8717C0262E14B3A9620C925"
     "106B6A78BFE4DFD897EFA7811BF69F0363C0ADC76BCF141492DE9544002797FE86549A0A"
     "DD3E26E5FBB6A36E89DEF39891805A99048D3EDE964DDFE3C54022BAE797CFD060FD21D9"
@@ -137,17 +138,18 @@ TEST(botan, encrypt_cstring)
     Botan::PK_Encryptor_EME pke(*public_key, std::string("EME1(SHA-256)"));
 
     const char *plain = "hello";
-
-    // The ciphertext is huge because it is padded.
     const char *exp_cipher_hex = hello_cipher_hex();
 
-    auto exp_cipher = Botan::hex_decode(exp_cipher_hex, strlen(exp_cipher_hex));
+    const Botan::SecureVector<byte> exp_cipher = 
+        Botan::hex_decode(exp_cipher_hex, strlen(exp_cipher_hex));
 
-    auto cipher = pke.encrypt((byte*)plain, strlen(plain), rng);
-    auto cipher_hex = Botan::hex_encode(cipher, true);
+    const Botan::SecureVector<byte> cipher = 
+        pke.encrypt((byte*)plain, strlen(plain), rng);
+
+    const std::string cipher_hex = Botan::hex_encode(cipher, true);
 
     CHECK_EQUAL(cipher, exp_cipher);
-    CHECK_EQUAL(cipher_hex, exp_cipher_hex);
+    CHECK(strcmp(cipher_hex.c_str(), exp_cipher_hex) == 0);
 }
 
 TEST(botan, decrypt_cstring)
@@ -161,7 +163,6 @@ TEST(botan, decrypt_cstring)
 
     const char *exp_plain_str = "hello";
 
-    // The ciphertext is huge because it is padded.
     const char *cipher_hex = hello_cipher_hex();
 
     Botan::SecureVector<byte> cipher = 
@@ -177,7 +178,6 @@ TEST(botan, encrypt_stdstring)
     Botan::LibraryInitializer init;
     MK_FAKE_RNG_INC(rng);
 
-    // The ciphertext is huge because it is padded.
     const std::string exp_cipher_hex = hello_cipher_hex();
 
     const Botan::SecureVector<byte> exp_cipher = 
@@ -204,7 +204,6 @@ TEST(botan, decrypt_stdstring)
     const std::string exp_plain_s("hello");
     const Botan::SecureVector<byte> exp_plain = str_to_secvec(exp_plain_s);
 
-    // The ciphertext is huge because it is padded.
     const std::string cipher_hex = hello_cipher_hex();
 
     const Botan::SecureVector<byte> cipher = 
