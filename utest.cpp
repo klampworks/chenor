@@ -86,6 +86,16 @@ TEST(botan, fake_rng_gives_fixed_number)
     CHECK_EQUAL(6, rng.next_byte());
 }
 
+TEST(botan, cannot_create_key_with_one_digit_rng)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_SIX(rng);
+
+    CHECK_THROWS(Botan::Internal_Error, 
+        Botan::RSA_PrivateKey(rng, 1024));
+}
+
+
 TEST(botan, create_key)
 {
     Botan::LibraryInitializer init;
