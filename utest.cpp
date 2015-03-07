@@ -162,14 +162,14 @@ TEST(botan, decrypt_cstring)
     Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
 
     const char *exp_plain_str = "hello";
-
     const char *cipher_hex = hello_cipher_hex();
 
     Botan::SecureVector<byte> cipher = 
         Botan::hex_decode(cipher_hex, strlen(cipher_hex), true);
 
-    auto plain = pkd.decrypt(cipher);
+    const Botan::SecureVector<byte> plain = pkd.decrypt(cipher);
     const char *plain_str = (char*)&(plain[0]);
+
     CHECK(strcmp(exp_plain_str, plain_str) == 0);
 }
 
