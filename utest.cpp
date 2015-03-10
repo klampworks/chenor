@@ -229,6 +229,25 @@ TEST(botan, decrypt_stdstring)
     CHECK_EQUAL(exp_plain_s, exp_plain_s);
 }
 
+TEST(botan, import_gpg_key_file)
+{
+    Botan::LibraryInitializer init;
+    std::unique_ptr<Botan::Public_Key> pub_key(
+        Botan::X509::load_key("openssl_rsa.pub"));
+
+    const std::string exp_pub_key_s(
+        "-----BEGIN PUBLIC KEY-----\n"
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKd5VgqiGkfozIOccVT6UAo2/e\n"
+        "IYzZ4AmzhW5R9m38SnRskyTFK3/vPGcXDpyE4WjFfeEOFqSFOTCHm9SvV0GMrION\n"
+        "OR4s41qBTg1LpWp3iPmRPZMjIAZzk+TlnUO2yejyDDwapyE7Pg8AQBbiPEbO6dd4\n"
+        "LL3rVs9fhswyOpqjpwIDAQAB\n"
+        "-----END PUBLIC KEY-----\n");
+
+    const std::string pub_key_s(Botan::X509::PEM_encode(*pub_key));
+    
+    CHECK_EQUAL(exp_pub_key_s, pub_key_s);
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
