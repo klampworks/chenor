@@ -229,7 +229,7 @@ TEST(botan, decrypt_stdstring)
     CHECK_EQUAL(exp_plain_s, exp_plain_s);
 }
 
-TEST(botan, import_gpg_key_file)
+TEST(botan, import_openssl_key_file)
 {
     Botan::LibraryInitializer init;
     std::unique_ptr<Botan::Public_Key> pub_key(
