@@ -229,9 +229,10 @@ TEST(botan, decrypt_stdstring)
     CHECK_EQUAL(exp_plain_s, exp_plain_s);
 }
 
-TEST(botan, import_openssl_key_file)
+TEST(botan, import_openssl_public_key_file)
 {
     Botan::LibraryInitializer init;
+
     std::unique_ptr<Botan::Public_Key> pub_key(
         Botan::X509::load_key("openssl_rsa.pub"));
 
@@ -246,6 +247,47 @@ TEST(botan, import_openssl_key_file)
     const std::string pub_key_s(Botan::X509::PEM_encode(*pub_key));
     
     CHECK_EQUAL(exp_pub_key_s, pub_key_s);
+}
+
+TEST(botan, import_openssl_private_key_file)
+{
+    Botan::LibraryInitializer init;
+    Botan::AutoSeeded_RNG rng;
+    std::unique_ptr<Botan::Private_Key> priv_key(
+        Botan::PKCS8::load_key("openssl_rsa", rng));
+
+    const std::string exp_pub_key_s(
+        "-----BEGIN PUBLIC KEY-----\n"
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKd5VgqiGkfozIOccVT6UAo2/e\n"
+        "IYzZ4AmzhW5R9m38SnRskyTFK3/vPGcXDpyE4WjFfeEOFqSFOTCHm9SvV0GMrION\n"
+        "OR4s41qBTg1LpWp3iPmRPZMjIAZzk+TlnUO2yejyDDwapyE7Pg8AQBbiPEbO6dd4\n"
+        "LL3rVs9fhswyOpqjpwIDAQAB\n"
+        "-----END PUBLIC KEY-----\n"
+    );
+
+    const std::string exp_priv_key_s(
+        "-----BEGIN RSA PRIVATE KEY-----\n"
+        "MIICXQIBAAKBgQDKd5VgqiGkfozIOccVT6UAo2/eIYzZ4AmzhW5R9m38SnRskyTF\n"
+        "K3/vPGcXDpyE4WjFfeEOFqSFOTCHm9SvV0GMrIONOR4s41qBTg1LpWp3iPmRPZMj\n"
+        "IAZzk+TlnUO2yejyDDwapyE7Pg8AQBbiPEbO6dd4LL3rVs9fhswyOpqjpwIDAQAB\n"
+        "AoGAZvlzK/rbqYIDsEJSkvAzB6QYXW3K6XUc+gU/GsivH8XueNpNtUpugwrBk+SG\n"
+        "jr7mPqvLLxMtEeUIXbBP9+31E+N6Kc/pUGo7+Soz7Vwd27bjHgfDeNSAXs2i/bal\n"
+        "mWkBUnWisBvJ8WVsjEWDb8B1CrC9bgD0tjAVGvWh0edVikECQQDn8XladVxs/7Ko\n"
+        "peXmRuZM7/UfVm8seyZo2Urv2p0OBOsfbMpP7zJr6KS2Z2a2iI4NlsmaGQb5q024\n"
+        "9E5horg/AkEA33d2j6axKS4U62jApoGq8UVi5J+PLaD3GkH8W7pjceSdZ9brV0WY\n"
+        "Q1+UBLINqgTTmhvjNe/zWYVutvsRxFP6mQJBAKcFiyapppHTG3s4Y7IMUiELFo+n\n"
+        "dU0prUIJX14TJc+HmSy68YDYNY3hLGMxWJSPBwQgFjLCXPSC9+f8/UhvnY8CQQCH\n"
+        "Uum6TiCEpoJGmJXpfyaMmw8rEbD72bkp7oGq7rFf/CiSBGVZ4Sw2yH9zZHu/1NJr\n"
+        "Ra4PMLK2KIaGSn5U3OIpAkAk/cwdHzBj4jR9Gjh9F02WO0OQdamXRbAcp9ti4PgU\n"
+        "XJmALVFzbqn89oG+6ui82dNODWJZh08uJdwTomITgFu5\n"
+        "-----END RSA PRIVATE KEY-----\n"
+    );
+
+    const std::string pub_key_s(Botan::X509::PEM_encode(*priv_key));
+    const std::string priv_key_s(Botan::PKCS8::PEM_encode(*priv_key));
+    
+    CHECK_EQUAL(exp_pub_key_s, pub_key_s);
+    CHECK_EQUAL(exp_priv_key_s, priv_key_s);
 }
 
 int main(int argc, char **argv)
