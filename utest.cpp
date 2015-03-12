@@ -294,6 +294,42 @@ TEST(botan, import_openssl_private_key_file)
     #endif
 }
 
+TEST(botan, import_gpg_public_key_file)
+{
+    Botan::LibraryInitializer init;
+
+    CHECK_THROWS(std::invalid_argument,
+    std::unique_ptr<Botan::Public_Key> /*pub_key*/ (
+        Botan::X509::load_key("gpg_rsa.pub")));
+
+    #if 0
+    const std::string exp_pub_key_s(
+        "-----BEGIN PGP PUBLIC KEY BLOCK-----\n"
+        "Version: GnuPG v2\n"
+        "\n"
+        "mI0EVgew6gEEANOXi7Cypo9NAL4v1cuPXLd2iIKPIEXh0iaocwd1kbNQzJykCgwy\n"
+        "wT80+UdCNFMsMxEO6mYj7bywKPzsdCJ2VvORnx7WK97i6RpOmapg/1fTvw0hZeVY\n"
+        "gqPRtt7bZHDHOBg7O8as1sfgTfRAhNugPxB905UQlRrPF9u4Rl5cGTZxABEBAAG0\n"
+        "D2FhYWFhIDxhQGEuY29tPoi5BBMBAgAjBQJWB7DqAhsDBwsJCAcDAgEGFQgCCQoL\n"
+        "BBYCAwECHgECF4AACgkQUPw3IYzirG7z6gP/ScsNVGQc5VoNajY91dIc3rkODRpk\n"
+        "fAnXi5l3YNz5/+Q0utVouOhkdw3pMDxO1BubfeZwzs9rRRRKJLVkJeEK7+K4LRZd\n"
+        "VApPL6RnvQOJGXyoT/vHnbLuGebkacq2BPxIfua4mZdF3Al7zJbbfLPzhIZ4C9uJ\n"
+        "qZiy8HNJIsUc27u4jQRWB7DqAQQA5urP9ZJxUhACAuhiFK7QUQhIzcs6esWjOSlp\n"
+        "+EYvMprABcegVAKUzOFFcjE1Jqqvt767OjR3uvMIfjBDBIEE15QBWfFHdBh/vES8\n"
+        "Ljrwad7Zw0pvMWeLcSfiA6H9KTs7u5HzPVchu87/Y3jRWDIliZxbEKV0PW7OVeDb\n"
+        "XesUtv8AEQEAAYifBBgBAgAJBQJWB7DqAhsMAAoJEFD8NyGM4qxuh2wD/0KHFcTM\n"
+        "9sLKY1NwhYgFHrWsaIquYKqwKBO6GnWY4HyQ03xJXg5/BTlsgaawxj2ZokQH2mq4\n"
+        "cA7s8gwfAVZWYfsBtJHdV1ZS2Mhz0EzDD+CWvYQvEiDjFZqL47KcRTRX28ACEOh3\n"
+        "SO1yuirDKeV7CrY6vZDuNpoDTQ5OTXwK42CY\n"
+        "=wowZ\n"
+        "-----END PGP PUBLIC KEY BLOCK-----\n"
+    );
+
+    const std::string pub_key_s(Botan::X509::PEM_encode(*pub_key));
+    CHECK_EQUAL(exp_pub_key_s, pub_key_s);
+    #endif
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
