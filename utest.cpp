@@ -8,6 +8,7 @@
 #include <botan/pubkey.h>
 #include "Fixed_Output_RNG.hpp"
 #include <iostream>
+#include <botan/b64_filt.h>
 
 #define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
 #define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
@@ -328,6 +329,21 @@ TEST(botan, import_gpg_public_key_file)
     const std::string pub_key_s(Botan::X509::PEM_encode(*pub_key));
     CHECK_EQUAL(exp_pub_key_s, pub_key_s);
     #endif
+}
+
+TEST(botan, pipe_base64_encode)
+{
+    Botan::LibraryInitializer init;
+
+    Botan::Pipe pipe(new Botan::Base64_Encoder);
+    pipe.start_msg();
+    pipe.write("hello");
+    pipe.end_msg();
+
+    const std::string exp_enc("aGVsbG8=");
+    const auto enc = pipe.read_all_as_string(0);
+
+    CHECK_EQUAL(exp_enc, enc);
 }
 
 int main(int argc, char **argv)
