@@ -346,6 +346,21 @@ TEST(botan, pipe_base64_encode)
     CHECK_EQUAL(exp_enc, enc);
 }
 
+TEST(botan, pipe_base64_decode)
+{
+    Botan::LibraryInitializer init;
+
+    Botan::Pipe pipe(new Botan::Base64_Decoder);
+    pipe.start_msg();
+    pipe.write("aGVsbG8=");
+    pipe.end_msg();
+
+    const std::string exp_dec("hello");
+    const auto dec = pipe.read_all_as_string(0);
+
+    CHECK_EQUAL(exp_dec, dec);
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
