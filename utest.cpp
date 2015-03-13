@@ -335,15 +335,17 @@ TEST(botan, pipe_base64_encode)
 {
     Botan::LibraryInitializer init;
 
+    const std::string in("hello");
+    const std::string exp_out("aGVsbG8=");
+
     Botan::Pipe pipe(new Botan::Base64_Encoder);
     pipe.start_msg();
-    pipe.write("hello");
+    pipe.write(in);
     pipe.end_msg();
 
-    const std::string exp_enc("aGVsbG8=");
-    const auto enc = pipe.read_all_as_string(0);
+    const auto out = pipe.read_all_as_string(0);
 
-    CHECK_EQUAL(exp_enc, enc);
+    CHECK_EQUAL(exp_out, out);
 }
 
 TEST(botan, pipe_base64_decode)
