@@ -9,6 +9,8 @@
 #include "Fixed_Output_RNG.hpp"
 #include <iostream>
 #include <botan/b64_filt.h>
+#include <botan/data_snk.h>
+#include <fstream>
 
 #define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
 #define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
@@ -363,6 +365,23 @@ TEST(botan, pipe_base64_decode)
     const auto out = pipe.read_all_as_string(0);
 
     CHECK_EQUAL(exp_out, out);
+}
+
+TEST(botan, pipe_base64_encode_to_file)
+{
+    Botan::LibraryInitializer init;
+
+    std::ofstream out("pipe_base64_encode_to_file.txt", std::ios::binary);
+    const std::string in("hello");
+    const std::string exp_out("aGVsbG8=");
+
+    Botan::Pipe pipe(new Botan::Base64_Encoder, new Botan::DataSink_Stream(out));
+
+    pipe.start_msg();
+    pipe.write(in);
+    pipe.end_msg();
+
+    out.close();
 }
 
 int main(int argc, char **argv)
