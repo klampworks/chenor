@@ -367,21 +367,35 @@ TEST(botan, pipe_base64_decode)
     CHECK_EQUAL(exp_out, out);
 }
 
+std::string read_file(const std::string &fn)
+{
+    std::ifstream ifs(fn, std::ios::binary);
+    std::string tmp;
+    std::string ret;
+
+    while(std::getline(ifs, tmp))
+        ret += tmp;
+        
+    return ret;
+}
+
 TEST(botan, pipe_base64_encode_to_file)
 {
     Botan::LibraryInitializer init;
 
-    std::ofstream out("pipe_base64_encode_to_file.txt", std::ios::binary);
+    std::ofstream ofs("pipe_base64_encode_to_file.txt", std::ios::binary);
     const std::string in("hello");
     const std::string exp_out("aGVsbG8=");
 
-    Botan::Pipe pipe(new Botan::Base64_Encoder, new Botan::DataSink_Stream(out));
+    Botan::Pipe pipe(new Botan::Base64_Encoder, new Botan::DataSink_Stream(ofs));
 
     pipe.start_msg();
     pipe.write(in);
     pipe.end_msg();
 
-    out.close();
+    ofs.close();
+    const std::string out = read_file("pipe_base64_encode_to_file.txt");
+    CHECK_EQUAL(out, exp_out);
 }
 
 int main(int argc, char **argv)
