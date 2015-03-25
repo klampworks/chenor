@@ -383,7 +383,8 @@ TEST(botan, pipe_base64_encode_to_file)
 {
     Botan::LibraryInitializer init;
 
-    std::ofstream ofs("pipe_base64_encode_to_file.txt", std::ios::binary);
+    const std::string fn("pipe_base64_encode_to_file.txt");
+    std::ofstream ofs(fn, std::ios::binary);
     const std::string in("hello");
     const std::string exp_out("aGVsbG8=");
 
@@ -394,7 +395,7 @@ TEST(botan, pipe_base64_encode_to_file)
     pipe.end_msg();
 
     ofs.close();
-    const std::string out = read_file("pipe_base64_encode_to_file.txt");
+    const std::string out = read_file(fn);
     CHECK_EQUAL(out, exp_out);
 }
 
