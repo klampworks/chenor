@@ -400,6 +400,33 @@ TEST(botan, pipe_base64_encode_to_file)
     system(std::string("rm " + fn).c_str());
 }
 
+TEST(botan, pipe_base64_encode_to_file_two_messages)
+{
+    Botan::LibraryInitializer init;
+
+    const std::string fn("pipe_base64_encode_to_file_two_messages.txt");
+    std::ofstream ofs(fn, std::ios::binary);
+    const std::string in1("hello");
+    const std::string in2("world");
+    const std::string exp_out("aGVsbG8=d29ybGQ=");
+
+    Botan::Pipe pipe(new Botan::Base64_Encoder, new Botan::DataSink_Stream(ofs));
+
+    pipe.start_msg();
+    pipe.write(in1);
+    pipe.end_msg();
+
+    pipe.start_msg();
+    pipe.write(in2);
+    pipe.end_msg();
+
+    ofs.close();
+    const std::string out = read_file(fn);
+    CHECK_EQUAL(out, exp_out);
+    system(std::string("rm " + fn).c_str());
+}
+
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
