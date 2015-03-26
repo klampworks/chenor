@@ -397,6 +397,7 @@ TEST(botan, pipe_base64_encode_to_file)
     ofs.close();
     const std::string out = read_file(fn);
     CHECK_EQUAL(out, exp_out);
+    system(std::string("rm " + fn).c_str());
 }
 
 int main(int argc, char **argv)
