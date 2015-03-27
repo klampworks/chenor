@@ -10,6 +10,7 @@
 #include <iostream>
 #include <botan/b64_filt.h>
 #include <botan/data_snk.h>
+#include <botan/data_src.h>
 #include <fstream>
 
 #define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
@@ -398,6 +399,37 @@ TEST(botan, pipe_base64_encode_to_file)
     const std::string out = read_file(fn);
     CHECK_EQUAL(out, exp_out);
     system(std::string("rm " + fn).c_str());
+}
+
+TEST(botan, pipe_base64_encode_to_file_decode_from_file)
+{
+    Botan::LibraryInitializer init;
+
+    const std::string fn_out("pipe_base64_encode_to_file.txt");
+    const std::string fn_in("pipe_base64_decode_from_file.txt");
+
+    std::ofstream ofs(fn_out, std::ios::binary);
+    const std::string in("hello");
+
+    Botan::Pipe pipe(new Botan::Base64_Encoder, new Botan::DataSink_Stream(ofs));
+
+    pipe.start_msg();
+    pipe.write(in);
+    pipe.end_msg();
+
+
+    ofs.close();
+    ofs.open(fn_in, std::ios::binary);
+
+    Botan::Pipe pipe2(new Botan::Base64_Decoder, new Botan::DataSink_Stream(ofs));
+
+    Botan::DataSource_Stream dss(fn_out);
+    pipe2.process_msg(dss);
+
+    ofs.close();
+
+    const std::string out = read_file(fn_in);
+    CHECK_EQUAL(out, in);
 }
 
 TEST(botan, pipe_base64_encode_to_file_two_messages)
