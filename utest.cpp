@@ -427,6 +427,34 @@ TEST(botan, pipe_base64_encode_to_file_decode_from_file)
     CHECK_EQUAL(out, in);
 }
 
+TEST(botan, pipe_base64_encode_to_file_decode_from_file_multi_msg_fails)
+{
+    Botan::LibraryInitializer init;
+
+    const std::string fn_enc("pipe_base64_encode_to_file.txt");
+    const std::string fn_dec("pipe_base64_decode_from_file.txt");
+
+    std::ofstream ofs(fn_enc, std::ios::binary);
+    const std::string in1("hello");
+    const std::string in2("world");
+
+    Botan::Pipe pipe(new Botan::Base64_Encoder, new Botan::DataSink_Stream(ofs));
+    pipe.process_msg(in1);
+    pipe.process_msg(in2);
+
+    ofs.close();
+    ofs.open(fn_dec, std::ios::binary);
+    Botan::DataSource_Stream dss(fn_enc);
+
+    Botan::Pipe pipe2(new Botan::Base64_Decoder, new Botan::DataSink_Stream(ofs));
+    pipe2.process_msg(dss);
+
+    ofs.close();
+
+    const std::string out = read_file(fn_dec);
+    CHECK(out != in1 + in2);
+}
+
 TEST(botan, pipe_base64_encode_to_file_two_messages)
 {
     Botan::LibraryInitializer init;
