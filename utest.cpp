@@ -434,8 +434,8 @@ TEST(botan, pipe_base64_encode_to_file_decode_from_file_multi_msg_fails)
 {
     Botan::LibraryInitializer init;
 
-    const std::string fn_enc("pipe_base64_encode_to_file.txt");
-    const std::string fn_dec("pipe_base64_decode_from_file.txt");
+    const std::string fn_enc("pipe_base64_encode_to_file_multi.txt");
+    const std::string fn_dec("pipe_base64_decode_from_file_multi.txt");
 
     std::ofstream ofs(fn_enc, std::ios::binary);
     const std::string in1("hello");
