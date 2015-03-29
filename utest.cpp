@@ -456,6 +456,9 @@ TEST(botan, pipe_base64_encode_to_file_decode_from_file_multi_msg_fails)
 
     const std::string out = read_file(fn_dec);
     CHECK(out != in1 + in2);
+
+    system(std::string("rm " + fn_enc).c_str());
+    system(std::string("rm " + fn_dec).c_str());
 }
 
 TEST(botan, pipe_base64_encode_to_file_two_messages)
