@@ -492,6 +492,24 @@ TEST(botan, pipe_base64_encode_to_file_two_messages)
     rm(fn);
 }
 
+TEST(botan, pk_encrypt_pads_to_same_length)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    const Botan::RSA_PrivateKey private_key(rng, 1024);
+    const Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
+
+    const std::string plain_s1("hello");
+    const Botan::SecureVector<byte> plain1 = str_to_secvec(plain_s1);
+    const std::string plain_s2("pneumonoultramicroscopicsilicovolcanoconiosis");
+    const Botan::SecureVector<byte> plain2 = str_to_secvec(plain_s2);
+
+    const Botan::SecureVector<byte> cipher1 = pke.encrypt(plain1, rng);
+    const Botan::SecureVector<byte> cipher2 = pke.encrypt(plain2, rng);
+
+    CHECK_EQUAL(cipher1.size(), cipher2.size());
+}
 
 int main(int argc, char **argv)
 {
