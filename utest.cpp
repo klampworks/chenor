@@ -57,6 +57,11 @@ const char* hello_cipher_hex()
     "35EA440E5CCB095AB2BAECB207FF6621BE3E018D4270EB0";
 }
 
+void rm(const std::string &fn)
+{
+    system(std::string("rm " + fn).c_str());
+}
+
 TEST_GROUP(botan)
 {
 };
@@ -398,7 +403,7 @@ TEST(botan, pipe_base64_encode_to_file)
     ofs.close();
     const std::string out = read_file(fn);
     CHECK_EQUAL(out, exp_out);
-    system(std::string("rm " + fn).c_str());
+    rm(fn);
 }
 
 TEST(botan, pipe_base64_encode_to_file_decode_from_file)
@@ -426,8 +431,8 @@ TEST(botan, pipe_base64_encode_to_file_decode_from_file)
     const std::string out = read_file(fn_dec);
     CHECK_EQUAL(out, in);
 
-    system(std::string("rm " + fn_enc).c_str());
-    system(std::string("rm " + fn_dec).c_str());
+    rm(fn_enc);
+    rm(fn_dec);
 }
 
 TEST(botan, pipe_base64_encode_to_file_decode_from_file_multi_msg_fails)
@@ -457,8 +462,8 @@ TEST(botan, pipe_base64_encode_to_file_decode_from_file_multi_msg_fails)
     const std::string out = read_file(fn_dec);
     CHECK(out != in1 + in2);
 
-    system(std::string("rm " + fn_enc).c_str());
-    system(std::string("rm " + fn_dec).c_str());
+    rm(fn_enc);
+    rm(fn_dec);
 }
 
 TEST(botan, pipe_base64_encode_to_file_two_messages)
@@ -484,7 +489,7 @@ TEST(botan, pipe_base64_encode_to_file_two_messages)
     ofs.close();
     const std::string out = read_file(fn);
     CHECK_EQUAL(out, exp_out);
-    system(std::string("rm " + fn).c_str());
+    rm(fn);
 }
 
 
