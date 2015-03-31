@@ -533,6 +533,27 @@ TEST(botan, pk_encrypt_pads_to_same_length_up_to_max)
     }
 }
 
+TEST(botan, pk_encrypt_more_than_max_length_fails)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    const Botan::RSA_PrivateKey private_key(rng, 1024);
+    const Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
+
+    const size_t max_len = 62;
+    std::string in("i");
+
+    for (size_t i = 0; i < max_len; ++i)
+        in += "i";
+
+    CHECK_EQUAL(in.size(), max_len + 1);
+
+    const Botan::SecureVector<byte> plain = str_to_secvec(in);
+
+    CHECK_THROWS(std::invalid_argument, pke.encrypt(plain, rng));
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
