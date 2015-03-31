@@ -17,11 +17,11 @@
 #define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
 
 #define MK_FAKE_RNG(name, n) \
-    Botan::SecureVector<byte> in; \
+    Botan::SecureVector<byte> xin; \
     for (int i = 0; i < 10000; ++i) \
-        in.push_back(n); \
+        xin.push_back(n); \
  \
-    Fixed_Output_RNG name(in);
+    Fixed_Output_RNG name(xin);
 
 void print_keys(const std::pair<std::string, std::string> &keys_s)
 {
@@ -509,6 +509,28 @@ TEST(botan, pk_encrypt_pads_to_same_length)
     const Botan::SecureVector<byte> cipher2 = pke.encrypt(plain2, rng);
 
     CHECK_EQUAL(cipher1.size(), cipher2.size());
+}
+
+TEST(botan, pk_encrypt_pads_to_same_length_up_to_max)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    const Botan::RSA_PrivateKey private_key(rng, 1024);
+    const Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
+
+    const size_t exp_len = 128;
+    const size_t max_len = 62;
+    std::string in("i");
+
+    for (size_t i = 0; i < max_len; ++i) {
+        CHECK_EQUAL(in.size(), i+1);
+        const Botan::SecureVector<byte> plain = str_to_secvec(in);
+        const Botan::SecureVector<byte> cipher = pke.encrypt(plain, rng);
+
+        CHECK_EQUAL(cipher.size(), exp_len);
+        in += "i";
+    }
 }
 
 int main(int argc, char **argv)
