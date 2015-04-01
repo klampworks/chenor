@@ -554,6 +554,74 @@ TEST(botan, pk_encrypt_more_than_max_length_fails)
     CHECK_THROWS(std::invalid_argument, pke.encrypt(plain, rng));
 }
 
+TEST(botan, pk_encrypt_to_file_multi)
+{
+    Botan::LibraryInitializer init;
+    MK_FAKE_RNG_INC(rng);
+
+    const Botan::RSA_PrivateKey private_key(rng, 1024);
+    const Botan::PK_Encryptor_EME pke(private_key, std::string("EME1(SHA-256)"));
+
+    const std::string plain_s1("hello");
+    const Botan::SecureVector<byte> plain1 = str_to_secvec(plain_s1);
+    const std::string plain_s2("pneumonoultramicroscopicsilicovolcanoconiosis");
+    const Botan::SecureVector<byte> plain2 = str_to_secvec(plain_s2);
+
+    const Botan::SecureVector<byte> cipher1 = pke.encrypt(plain1, rng);
+    const std::string cipher1_hex = Botan::hex_encode(cipher1);
+
+    const Botan::SecureVector<byte> cipher2 = pke.encrypt(plain2, rng);
+    const std::string cipher2_hex = Botan::hex_encode(cipher2);
+
+    const std::string fn("pk_encrypt_to_file_multi.txt");
+    std::ofstream ofs(fn, std::ios::binary);
+
+    // Don't do that.
+    //ofs << cipher1;
+    //ofs << cipher2;
+
+    // Do this.
+    ofs.write((char*)&cipher1[0], cipher1.size());
+    ofs.write((char*)&cipher2[0], cipher2.size());
+    ofs.flush();
+    ofs.close();
+
+    const Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
+    const size_t len = 128;
+    char buf[len];
+
+    std::ifstream ifs(fn, std::ios::binary);
+    ifs.read(buf, len);
+
+    size_t i = 0;
+    for (const auto &a : cipher1) {
+        CHECK_EQUAL(a, (byte)buf[i]);
+        i++;
+    }
+
+    const std::string enc1_hex = Botan::hex_encode((byte*)buf, len, true);
+    CHECK_EQUAL(cipher1_hex, enc1_hex);
+
+    const Botan::SecureVector<byte> dec1 = pkd.decrypt((byte*)buf, len);
+    CHECK_EQUAL(plain1, dec1);
+
+    ifs.read(buf, len);
+
+    i = 0;
+    for (const auto &a : cipher2) {
+        CHECK_EQUAL(a, (byte)buf[i]);
+        i++;
+    }
+
+    const std::string enc2_hex = Botan::hex_encode((byte*)buf, len, true);
+    CHECK_EQUAL(cipher2_hex, enc2_hex);
+
+    const Botan::SecureVector<byte> dec2 = pkd.decrypt((byte*)buf, len);
+    CHECK_EQUAL(plain2, dec2);
+    ifs.close();
+}
+
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
