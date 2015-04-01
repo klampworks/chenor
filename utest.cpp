@@ -12,6 +12,7 @@
 #include <botan/data_snk.h>
 #include <botan/data_src.h>
 #include <fstream>
+#include <functional>
 
 #define MK_FAKE_RNG_INC(name) MK_FAKE_RNG(name, i)
 #define MK_FAKE_RNG_SIX(name) MK_FAKE_RNG(name, 6)
@@ -589,36 +590,31 @@ TEST(botan, pk_encrypt_to_file_multi)
     const Botan::PK_Decryptor_EME pkd(private_key, std::string("EME1(SHA-256)"));
     const size_t len = 128;
     char buf[len];
-
     std::ifstream ifs(fn, std::ios::binary);
+
+    auto check = [&buf, &pkd, len] (
+        const Botan::SecureVector<byte> &cipher, 
+        const Botan::SecureVector<byte> &plain) 
+    {
+        size_t i = 0;
+        for (const auto &a : cipher) {
+            CHECK_EQUAL(a, (byte)buf[i]);
+            i++;
+        }
+
+        const std::string enc_hex = Botan::hex_encode((byte*)buf, len, true);
+        const std::string cip_hex = Botan::hex_encode(cipher, true);
+        CHECK_EQUAL(cip_hex, enc_hex);
+
+        const Botan::SecureVector<byte> dec = pkd.decrypt((byte*)buf, len);
+        CHECK_EQUAL(plain, dec);
+    };
+
     ifs.read(buf, len);
-
-    size_t i = 0;
-    for (const auto &a : cipher1) {
-        CHECK_EQUAL(a, (byte)buf[i]);
-        i++;
-    }
-
-    const std::string enc1_hex = Botan::hex_encode((byte*)buf, len, true);
-    CHECK_EQUAL(cipher1_hex, enc1_hex);
-
-    const Botan::SecureVector<byte> dec1 = pkd.decrypt((byte*)buf, len);
-    CHECK_EQUAL(plain1, dec1);
+    check(cipher1, plain1);
 
     ifs.read(buf, len);
-
-    i = 0;
-    for (const auto &a : cipher2) {
-        CHECK_EQUAL(a, (byte)buf[i]);
-        i++;
-    }
-
-    const std::string enc2_hex = Botan::hex_encode((byte*)buf, len, true);
-    CHECK_EQUAL(cipher2_hex, enc2_hex);
-
-    const Botan::SecureVector<byte> dec2 = pkd.decrypt((byte*)buf, len);
-    CHECK_EQUAL(plain2, dec2);
-    ifs.close();
+    check(cipher2, plain2);
 }
 
 
