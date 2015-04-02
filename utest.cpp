@@ -48,6 +48,11 @@ Botan::SecureVector<byte> str_to_secvec(const std::string &s)
     return Botan::SecureVector<byte>((byte*)s.c_str(), s.size());
 }
 
+std::string secvec_to_str(const Botan::SecureVector<byte> &s)
+{
+    return std::string((char*)&s[0], s.size());
+}
+
 const char* hello_cipher_hex()
 {
     // The word "hello" encrypted with a MK_FAKE_RNG_INC and RSA "EME1(SHA-256)".
