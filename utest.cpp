@@ -599,7 +599,8 @@ TEST(botan, pk_encrypt_to_file_multi)
 
     auto check = [&buf, &pkd, len] (
         const Botan::SecureVector<byte> &cipher, 
-        const Botan::SecureVector<byte> &plain) 
+        const Botan::SecureVector<byte> &plain,
+        const std::string &plain_s) 
     {
         size_t i = 0;
         for (const auto &a : cipher) {
@@ -613,13 +614,16 @@ TEST(botan, pk_encrypt_to_file_multi)
 
         const Botan::SecureVector<byte> dec = pkd.decrypt((byte*)buf, len);
         CHECK_EQUAL(plain, dec);
+
+        const std::string res_s = secvec_to_str(dec);
+        CHECK_EQUAL(plain_s, res_s);
     };
 
     ifs.read(buf, len);
-    check(cipher1, plain1);
+    check(cipher1, plain1, plain_s1);
 
     ifs.read(buf, len);
-    check(cipher2, plain2);
+    check(cipher2, plain2, plain_s2);
 }
 
 
