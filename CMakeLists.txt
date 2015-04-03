@@ -4,13 +4,6 @@ set(CMAKE_CXX_COMPILER_ID "Clang")
 project(chenor)
 
 add_executable(
-    test
-    test.cpp
-)
-
-target_link_libraries(test botan)
-
-add_executable(
     utest
     utest.cpp
 )
