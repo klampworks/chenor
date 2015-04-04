@@ -9,3 +9,9 @@ add_executable(
 )
 target_link_libraries(utest CppUTest)
 target_link_libraries(utest botan)
+
+add_executable(
+    chenor_utest
+    chenor_utest.cpp
+)
+target_link_libraries(chenor_utest CppUTest)
