@@ -570,14 +570,12 @@ TEST(botan, pk_encrypt_to_file_multi)
 
     const std::string plain_s1("hello");
     const Botan::SecureVector<byte> plain1 = str_to_secvec(plain_s1);
+
     const std::string plain_s2("pneumonoultramicroscopicsilicovolcanoconiosis");
     const Botan::SecureVector<byte> plain2 = str_to_secvec(plain_s2);
 
     const Botan::SecureVector<byte> cipher1 = pke.encrypt(plain1, rng);
-    const std::string cipher1_hex = Botan::hex_encode(cipher1);
-
     const Botan::SecureVector<byte> cipher2 = pke.encrypt(plain2, rng);
-    const std::string cipher2_hex = Botan::hex_encode(cipher2);
 
     const std::string fn("pk_encrypt_to_file_multi.txt");
     std::ofstream ofs(fn, std::ios::binary);
