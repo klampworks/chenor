@@ -15,3 +15,4 @@ add_executable(
     chenor_utest.cpp
 )
 target_link_libraries(chenor_utest CppUTest)
+target_link_libraries(chenor_utest CppUTestExt)
