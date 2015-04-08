@@ -17,7 +17,7 @@ TEST_GROUP(chenor_write)
     {
         if (!write_buf) {
             write_buf = static_cast<const std::vector<char>*>(
-                mock().getData("buf").getObjectPointer());
+                mock().getData("write_buf").getObjectPointer());
         }
 
         delete write_buf;
@@ -29,7 +29,7 @@ ssize_t write(int fd, void *buf, size_t count)
 {
     const auto cbuf = static_cast<char*>(buf);
     auto v = new std::vector<char>(cbuf, cbuf + count);
-    mock().setDataObject("buf", "", v);
+    mock().setDataObject("write_buf", "", v);
 
     return mock().actualCall("write")
         .withParameter("fd", fd)
@@ -66,7 +66,7 @@ TEST(chenor_write, test_how_mocks_work2)
     CHECK_EQUAL(666, write(1, buf, sizeof buf));
 
     write_buf = static_cast<const std::vector<char>*>(
-        mock().getData("buf").getObjectPointer());
+        mock().getData("write_buf").getObjectPointer());
 
     for (const auto &f: *write_buf)
         std::cout << f << std::endl;
