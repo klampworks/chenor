@@ -6,8 +6,21 @@
 
 TEST_GROUP(chenor_write)
 {
+    const std::vector<char> *write_buf;
+
+    void setup()
+    {
+        write_buf = nullptr;
+    }
+
     void teardown()
     {
+        if (!write_buf) {
+            write_buf = static_cast<const std::vector<char>*>(
+                mock().getData("buf").getObjectPointer());
+        }
+
+        delete write_buf;
         mock().clear();
     }
 };
@@ -36,9 +49,6 @@ TEST(chenor_write, test_how_mocks_work)
 
     CHECK_EQUAL(666, write(1, buf, sizeof buf));
 
-    auto v = (const std::vector<char>*)mock().getData("buf").getObjectPointer();
-    delete(v);
-
     mock().checkExpectations();
 }
 
@@ -55,12 +65,12 @@ TEST(chenor_write, test_how_mocks_work2)
 
     CHECK_EQUAL(666, write(1, buf, sizeof buf));
 
-    auto v = (const std::vector<char>*)mock().getData("buf").getObjectPointer();
+    write_buf = static_cast<const std::vector<char>*>(
+        mock().getData("buf").getObjectPointer());
 
-    for (const auto &f: *v)
+    for (const auto &f: *write_buf)
         std::cout << f << std::endl;
 
-    delete(v);
     mock().checkExpectations();
 }
 
