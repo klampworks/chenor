@@ -2,7 +2,6 @@
 #include "CppUTestExt/MockSupport.h"
 #include "chenor.hpp"
 #include <vector>
-//#include <unistd.h>
 
 TEST_GROUP(chenor_write)
 {
@@ -52,7 +51,6 @@ TEST(chenor_write, test_how_mocks_work)
     mock().checkExpectations();
 }
 
-#include <iostream>
 TEST(chenor_write, test_how_mocks_work2)
 {
     char buf[] = "hello world";
@@ -68,9 +66,7 @@ TEST(chenor_write, test_how_mocks_work2)
     write_buf = static_cast<const std::vector<char>*>(
         mock().getData("write_buf").getObjectPointer());
 
-    for (const auto &f: *write_buf)
-        std::cout << f << std::endl;
-
+    STRCMP_EQUAL(std::string(write_buf->begin(), write_buf->end()).c_str(), buf);
     mock().checkExpectations();
 }
 
