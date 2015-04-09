@@ -13,6 +13,8 @@ target_link_libraries(utest botan)
 add_executable(
     chenor_utest
     chenor_utest.cpp
+    chenor.cpp
+    mock_write.cpp
 )
 target_link_libraries(chenor_utest CppUTest)
 target_link_libraries(chenor_utest CppUTestExt)
