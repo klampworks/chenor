@@ -25,8 +25,8 @@ TEST_GROUP(chenor_write)
         mock().clear();
     }
 };
-#if 0
-ssize_t write(int fd, void *buf, size_t count)
+
+ssize_t mywrite(int fd, void *buf, size_t count)
 {
     const auto cbuf = static_cast<char*>(buf);
     auto v = new std::vector<char>(cbuf, cbuf + count);
@@ -38,7 +38,7 @@ ssize_t write(int fd, void *buf, size_t count)
         .withParameter("count", count)
         .returnIntValue();
 }
-#endif
+
 TEST(chenor_write, test_how_mocks_work)
 {
     char buf[] = "hello world";
@@ -48,7 +48,7 @@ TEST(chenor_write, test_how_mocks_work)
         .withParameter("count", sizeof buf)
         .andReturnValue(666);
 
-    CHECK_EQUAL(666, write_fp(1, buf, sizeof buf));
+    CHECK_EQUAL(666, mywrite(1, buf, sizeof buf));
 
     mock().checkExpectations();
 }
@@ -63,7 +63,7 @@ TEST(chenor_write, test_how_mocks_work2)
         .withParameter("count", sizeof buf)
         .andReturnValue(666);
 
-    CHECK_EQUAL(666, write_fp(1, buf, sizeof buf));
+    CHECK_EQUAL(666, mywrite(1, buf, sizeof buf));
 
     write_buf = static_cast<const std::vector<char>*>(
         mock().getData("write_buf").getObjectPointer());
