@@ -3,6 +3,7 @@
 #include "chenor.hpp"
 #include <vector>
 #include "write.hpp"
+#include <cstring>
 
 TEST_GROUP(chenor_write)
 {
@@ -84,6 +85,12 @@ TEST(chenor_write, output_should_be_different_to_input)
     chenor::write(1, in, sizeof in);
     mock().checkExpectations();
 
+    write_buf = static_cast<const std::vector<char>*>(
+        mock().getData("write_buf").getObjectPointer());
+
+    CHECK(std::strcmp(
+        std::string(write_buf->begin(), write_buf->end()).c_str(), 
+        in) != 0);
 }
 
 int main(int argc, char **argv)
