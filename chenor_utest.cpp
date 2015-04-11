@@ -78,7 +78,7 @@ TEST(chenor_write, output_should_be_different_to_input)
 
     mock().expectOneCall("write")
         .withParameter("fd", 1)
-        .withOutputParameterReturning("buf", in, sizeof in)
+        .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", sizeof in)
         .andReturnValue(666);
 

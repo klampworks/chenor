@@ -11,7 +11,7 @@ ssize_t wwrite(int fd, void *buf, size_t count)
 
     return mock().actualCall("write")
         .withParameter("fd", fd)
-        .withOutputParameter("buf", buf)
+        .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", count)
         .returnIntValue();
 }
