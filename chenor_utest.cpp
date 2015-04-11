@@ -93,6 +93,27 @@ TEST(chenor_write, output_should_be_different_to_input)
         in) != 0);
 }
 
+TEST(chenor_write, output_should_be_at_least_128_bytes)
+{
+    char in[] = "hello world";
+
+    CHECK(strlen(in) < 128);
+
+    mock().expectOneCall("write")
+        .withParameter("fd", 1)
+        .withParameter("buf", static_cast<const void*>(nullptr))
+        .withParameter("count", 128)
+        .andReturnValue(666);
+
+    chenor::write(1, in, sizeof in);
+    mock().checkExpectations();
+
+    write_buf = static_cast<const std::vector<char>*>(
+        mock().getData("write_buf").getObjectPointer());
+
+    CHECK(write_buf->size() >= 128);
+}
+
 int main(int argc, char **argv)
 {
     return CommandLineTestRunner::RunAllTests(argc, argv);
