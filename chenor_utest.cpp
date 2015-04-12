@@ -79,8 +79,7 @@ TEST(chenor_write, output_should_be_different_to_input)
     mock().expectOneCall("write")
         .withParameter("fd", 1)
         .withParameter("buf", static_cast<const void*>(nullptr))
-        .withParameter("count", 128)
-        .andReturnValue(666);
+        .withParameter("count", 128);
 
     chenor::write(1, in, sizeof in);
     mock().checkExpectations();
@@ -102,8 +101,7 @@ TEST(chenor_write, output_should_be_at_least_128_bytes)
     mock().expectOneCall("write")
         .withParameter("fd", 1)
         .withParameter("buf", static_cast<const void*>(nullptr))
-        .withParameter("count", 128)
-        .andReturnValue(666);
+        .withParameter("count", 128);
 
     chenor::write(1, in, sizeof in);
     mock().checkExpectations();
