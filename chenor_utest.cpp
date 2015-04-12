@@ -79,7 +79,7 @@ TEST(chenor_write, output_should_be_different_to_input)
     mock().expectOneCall("write")
         .withParameter("fd", 1)
         .withParameter("buf", static_cast<const void*>(nullptr))
-        .withParameter("count", sizeof in)
+        .withParameter("count", 128)
         .andReturnValue(666);
 
     chenor::write(1, in, sizeof in);
