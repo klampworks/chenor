@@ -9,6 +9,7 @@ add_executable(
 )
 target_link_libraries(utest CppUTest)
 target_link_libraries(utest botan)
+#dev-libs/botan-1.10.5
 
 add_executable(
     chenor_utest
@@ -18,3 +19,4 @@ add_executable(
 )
 target_link_libraries(chenor_utest CppUTest)
 target_link_libraries(chenor_utest CppUTestExt)
+target_link_libraries(chenor_utest botan)
