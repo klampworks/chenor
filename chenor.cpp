@@ -6,7 +6,8 @@
 namespace chenor {
 
     Botan::RSA_PrivateKey *private_key;
-    Botan::AutoSeeded_RNG *rng;
+    //extern Fixed_Output_RNG *rng;
+    std::unique_ptr<Botan::AutoSeeded_RNG> rng;
 
     ssize_t write(int fd, void *buf, size_t count)
     {
@@ -54,7 +55,8 @@ namespace chenor {
 
     void setup()
     {
-        chenor::rng = new Botan::AutoSeeded_RNG;
+        chenor::rng = std::unique_ptr<Botan::AutoSeeded_RNG>(
+            new Botan::AutoSeeded_RNG);
         chenor::private_key = new Botan::RSA_PrivateKey(*chenor::rng, 1024);
     }
 }
