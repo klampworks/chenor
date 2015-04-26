@@ -4,10 +4,7 @@
 #include <vector>
 #include "write.hpp"
 #include <cstring>
-#include "Fixed_Output_RNG.hpp"
 #include <botan/init.h>
-#include <botan/rsa.h>
-#include <botan/auto_rng.h>
 
 TEST_GROUP(chenor_write)
 {
@@ -20,8 +17,6 @@ TEST_GROUP(chenor_write)
 
     void teardown()
     {
-    //    delete chenor::private_key; 
-        //delete chenor::rng; 
         if (!write_buf) {
             write_buf = static_cast<const std::vector<char>*>(
                 mock().getData("write_buf").getObjectPointer());
