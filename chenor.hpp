@@ -13,7 +13,6 @@ namespace chenor {
 
     // TODO, Find out why PrivateKey destructors cause segfaults.
     extern Botan::RSA_PrivateKey *private_key;
-    //extern Fixed_Output_RNG *rng;
     extern std::unique_ptr<Botan::AutoSeeded_RNG> rng;
 
     void setup();
