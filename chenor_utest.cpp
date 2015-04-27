@@ -146,7 +146,6 @@ TEST(chenor_write, output_should_be_encrypted)
     //CHECK_EQUAL(exp_out, out);
 }
 
-#include <iostream>
 TEST(chenor_write, output_should_be_encrypted_two_calls)
 {
     Botan::LibraryInitializer init;
