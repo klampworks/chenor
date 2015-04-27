@@ -10,10 +10,24 @@ namespace chenor {
 
     ssize_t write(int fd, void *buf, size_t count)
     {
+        const byte *st = static_cast<byte*>(buf);
+        const byte *en = st+count;
         Botan::PK_Encryptor_EME pke(*private_key, std::string("EME1(SHA-256)"));
-        auto enc = pke.encrypt((byte*)buf, count, *rng);
+        Botan::SecureVector<byte> enc;
 
-        return write_fp(fd, &enc[0], 128 /*count*/);
+        while (st < en) {
+            const auto d = en - st;
+
+            if (d > 62) {
+                enc += pke.encrypt(st, 62, *chenor::rng);
+                st += 62;
+            } else {
+                enc += pke.encrypt(st, d, *chenor::rng);
+                st += d;
+            }
+        }
+
+        return write_fp(fd, &enc[0], enc.size() /*count*/);
     }
 
     void init()

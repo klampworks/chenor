@@ -185,6 +185,31 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         CHECK(in2[i] != out2[i]);
 }
 
+TEST(chenor_write, input_larger_than_128)
+{
+    Botan::LibraryInitializer init;
+    chenor::setup();
+
+    std::vector<char> in;
+    for (int i = 0; i < 150; ++i)
+        in.push_back(i%26+97);
+
+    mock().expectOneCall("write")
+        .withParameter("fd", 1)
+        .withParameter("buf", static_cast<const void*>(nullptr))
+        .withParameter("count", 384);
+
+    chenor::write(1, &in[0], in.size());
+    mock().checkExpectations();
+
+    write_buf = static_cast<const std::vector<char>*>(
+        mock().getData("write_buf").getObjectPointer());
+
+    const auto out = std::string(write_buf->begin(), write_buf->end());
+    for (size_t i = 0; i < in.size(); ++i) {
+        CHECK(in[i] != out[i]);
+    }
+}
 int main(int argc, char **argv)
 {
     // Does not seem to take smark pointers into account. Disable it.
