@@ -28,7 +28,7 @@ TEST_GROUP(chenor_write)
 };
 
 template <typename T, typename U>
-void check(const T in, size_t s, const U out)
+void is_similar(const T in, size_t s, const U out)
 {
     /* We basically just want to make sure that the input is not the same as the
      * output. There are bound to be occasional random simularities though. */
@@ -178,7 +178,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::string(write_buf->begin(), write_buf->end());
-    check(in1, strlen(in1), out);
+    is_similar(in1, strlen(in1), out);
 
     char in2[] = "world";
 
@@ -193,7 +193,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out2 = std::string(write_buf->begin(), write_buf->end());
-    check(in2, strlen(in2), out2);
+    is_similar(in2, strlen(in2), out2);
 }
 
 TEST(chenor_write, input_larger_than_128)
@@ -217,7 +217,7 @@ TEST(chenor_write, input_larger_than_128)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::string(write_buf->begin(), write_buf->end());
-    check(in, in.size(), out);
+    is_similar(in, in.size(), out);
 }
 int main(int argc, char **argv)
 {
