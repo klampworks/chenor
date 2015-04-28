@@ -27,6 +27,19 @@ TEST_GROUP(chenor_write)
     }
 };
 
+template <typename T, typename U>
+void check(const T in, size_t s, const U out)
+{
+    /* We basically just want to make sure that the input is not the same as the
+     * output. There are bound to be occasional random simularities though. */
+    size_t clashes = 0;
+    for (size_t i = 0; i < s; ++i) {
+        clashes += (in[i] == out[i]);
+    }
+
+    CHECK(clashes < (s/10)+1);
+}
+
 ssize_t mywrite(int fd, void *buf, size_t count)
 {
     const auto cbuf = static_cast<char*>(buf);
@@ -165,8 +178,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::string(write_buf->begin(), write_buf->end());
-    for (size_t i = 0; i < strlen(in1); ++i)
-        CHECK(in1[i] != out[i]);
+    check(in1, strlen(in1), out);
 
     char in2[] = "world";
 
@@ -181,8 +193,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out2 = std::string(write_buf->begin(), write_buf->end());
-    for (size_t i = 0; i < strlen(in2); ++i)
-        CHECK(in2[i] != out2[i]);
+    check(in2, strlen(in2), out2);
 }
 
 TEST(chenor_write, input_larger_than_128)
@@ -206,9 +217,7 @@ TEST(chenor_write, input_larger_than_128)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::string(write_buf->begin(), write_buf->end());
-    for (size_t i = 0; i < in.size(); ++i) {
-        CHECK(in[i] != out[i]);
-    }
+    check(in, in.size(), out);
 }
 int main(int argc, char **argv)
 {
