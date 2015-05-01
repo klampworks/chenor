@@ -16,15 +16,11 @@ namespace chenor {
         Botan::SecureVector<byte> enc;
 
         while (st < en) {
-            const auto d = en - st;
 
-            if (d > 62) {
-                enc += pke.encrypt(st, 62, *chenor::rng);
-                st += 62;
-            } else {
-                enc += pke.encrypt(st, d, *chenor::rng);
-                st += d;
-            }
+            auto d = (en - st);
+            d = d > 62 ? 62 : d;
+            enc += pke.encrypt(st, d, *chenor::rng);
+            st += d;
         }
 
         return write_fp(fd, &enc[0], enc.size() /*count*/);
