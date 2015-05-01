@@ -23,7 +23,7 @@ namespace chenor {
             st += d;
         }
 
-        return write_fp(fd, &enc[0], enc.size() /*count*/);
+        return write_fp(fd, &enc[0], enc.size());
     }
 
     void init()
