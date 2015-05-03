@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
-#include <botan/rsa.h>
-#include "Fixed_Output_RNG.hpp"
-#include <botan/pubkey.h>
-#include <botan/auto_rng.h>
-#include <botan/init.h>
+
+namespace Botan {
+    class RSA_PrivateKey;
+    class AutoSeeded_RNG;
+}
 
 namespace chenor {
 

@@ -1,7 +1,12 @@
 #include <sys/types.h>
 #include "write.hpp"
 #include <botan/pubkey.h>
+#include <botan/rsa.h>
+#include <botan/types.h>
 #include "chenor.hpp"
+#include <botan/auto_rng.h>
+
+using Botan::byte;
 
 namespace chenor {
 
