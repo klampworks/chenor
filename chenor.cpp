@@ -13,9 +13,9 @@ namespace chenor {
     Botan::RSA_PrivateKey *private_key;
     std::unique_ptr<Botan::AutoSeeded_RNG> rng;
 
-    ssize_t write(int fd, void *buf, size_t count)
+    ssize_t write(int fd, const void *buf, size_t count)
     {
-        const byte *st = static_cast<byte*>(buf);
+        const byte *st = static_cast<const byte*>(buf);
         const byte *en = st+count;
         Botan::PK_Encryptor_EME pke(*private_key, std::string("EME1(SHA-256)"));
         Botan::SecureVector<byte> enc;
