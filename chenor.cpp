@@ -33,7 +33,9 @@ namespace chenor {
 
     std::string decrypt(const std::vector<char> &in)
     {
-        return "";
+        Botan::PK_Decryptor_EME pkd(*private_key, std::string("EME1(SHA-256)"));
+        const auto dec = pkd.decrypt((const byte*)(&in[0]), in.size());
+        return std::string(dec.begin(), dec.end());
     }
 
     void init()
