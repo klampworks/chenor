@@ -219,6 +219,30 @@ TEST(chenor_write, input_larger_than_128)
     const auto out = std::string(write_buf->begin(), write_buf->end());
     is_similar(in, in.size(), out);
 }
+
+TEST(chenor_write, write_then_decrypt)
+{
+    Botan::LibraryInitializer init;
+    chenor::setup();
+
+    std::string in("hello");
+
+    mock().expectOneCall("write")
+        .withParameter("fd", 1)
+        .withParameter("buf", static_cast<const void*>(nullptr))
+        .withParameter("count", 128);
+
+    chenor::write(1, in.c_str(), in.size());
+    mock().checkExpectations();
+
+    write_buf = static_cast<const std::vector<char>*>(
+        mock().getData("write_buf").getObjectPointer());
+
+    const auto out = std::vector<char>(write_buf->begin(), write_buf->end());
+    const auto dec = chenor::decrypt(out);
+    CHECK_EQUAL(in, dec);
+}
+
 int main(int argc, char **argv)
 {
     // Does not seem to take smark pointers into account. Disable it.

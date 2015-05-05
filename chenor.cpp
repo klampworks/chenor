@@ -31,6 +31,11 @@ namespace chenor {
         return write_fp(fd, &enc[0], enc.size());
     }
 
+    std::string decrypt(const std::vector<char> &in)
+    {
+        return "";
+    }
+
     void init()
     {
 
