@@ -243,6 +243,28 @@ TEST(chenor_write, write_then_decrypt)
     CHECK_EQUAL(in, dec);
 }
 
+TEST(chenor_write, write_then_decrypt_long_string)
+{
+    Botan::LibraryInitializer init;
+    chenor::setup();
+
+    std::string in("After a failed attempt to foil Sephiroth's theft of the Black Materia, Aerith ventures alone into the Forgotten City. Cloud and his companions give chase, eventually finding her praying at an altar. As Aerith looks up to smile at Cloud, Sephiroth appears and ");
+
+    mock().expectOneCall("write")
+        .withParameter("fd", 1)
+        .withParameter("buf", static_cast<const void*>(nullptr))
+        .withParameter("count", 640);
+
+    chenor::write(1, in.c_str(), in.size());
+    mock().checkExpectations();
+
+    write_buf = static_cast<const std::vector<char>*>(
+        mock().getData("write_buf").getObjectPointer());
+
+    const auto out = std::vector<char>(write_buf->begin(), write_buf->end());
+    const auto dec = chenor::decrypt(out);
+    CHECK_EQUAL(in, dec);
+}
 int main(int argc, char **argv)
 {
     // Does not seem to take smark pointers into account. Disable it.
