@@ -223,7 +223,8 @@ TEST(chenor_write, input_larger_than_128)
 TEST(chenor_write, write_then_decrypt)
 {
     Botan::LibraryInitializer init;
-    chenor::setup();
+    const auto pk = chenor::gen_key();
+    chenor::setup(pk);
 
     std::string in("hello");
 
@@ -239,14 +240,15 @@ TEST(chenor_write, write_then_decrypt)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::vector<char>(write_buf->begin(), write_buf->end());
-    const auto dec = chenor::decrypt(out);
+    const auto dec = chenor::decrypt(out, pk);
     CHECK_EQUAL(in, dec);
 }
 
 TEST(chenor_write, write_then_decrypt_long_string)
 {
     Botan::LibraryInitializer init;
-    chenor::setup();
+    const auto pk = chenor::gen_key();
+    chenor::setup(pk);
 
     std::string in("After a failed attempt to foil Sephiroth's theft of the Black Materia, Aerith ventures alone into the Forgotten City. Cloud and his companions give chase, eventually finding her praying at an altar. As Aerith looks up to smile at Cloud, Sephiroth appears and ");
 
@@ -262,9 +264,10 @@ TEST(chenor_write, write_then_decrypt_long_string)
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::vector<char>(write_buf->begin(), write_buf->end());
-    const auto dec = chenor::decrypt(out);
+    const auto dec = chenor::decrypt(out, pk);
     CHECK_EQUAL(in, dec);
 }
+
 int main(int argc, char **argv)
 {
     // Does not seem to take smark pointers into account. Disable it.
