@@ -3,8 +3,10 @@
 #include <string>
 #include <vector>
 
+#include <botan/rsa.h>
 namespace Botan {
-    class RSA_PrivateKey;
+    //class RSA_PrivateKey;
+    //class RSA_PublicKey;
     class AutoSeeded_RNG;
 }
 
@@ -14,10 +16,10 @@ namespace chenor {
     std::string decrypt(const std::vector<char> &in, Botan::RSA_PrivateKey *pk);
     void init();
 
-    // TODO, Find out why PrivateKey destructors cause segfaults.
-    extern Botan::RSA_PrivateKey *private_key;
+    // TODO, Find out why PublicKey destructors cause segfaults.
+    extern Botan::RSA_PublicKey *public_key;
     extern std::unique_ptr<Botan::AutoSeeded_RNG> rng;
     Botan::RSA_PrivateKey* gen_key();
 
-    void setup(Botan::RSA_PrivateKey *pk=nullptr);
+    void setup(Botan::RSA_PublicKey *pk=nullptr);
 }

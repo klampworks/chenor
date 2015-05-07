@@ -10,14 +10,14 @@ using Botan::byte;
 
 namespace chenor {
 
-    Botan::RSA_PrivateKey *private_key;
+    Botan::RSA_PublicKey *public_key;
     std::unique_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
 
     ssize_t write(int fd, const void *buf, size_t count)
     {
         const byte *st = static_cast<const byte*>(buf);
         const byte *en = st+count;
-        Botan::PK_Encryptor_EME pke(*private_key, std::string("EME1(SHA-256)"));
+        Botan::PK_Encryptor_EME pke(*public_key, std::string("EME1(SHA-256)"));
         Botan::SecureVector<byte> enc;
 
         while (st < en) {
@@ -59,13 +59,13 @@ namespace chenor {
                 new Botan::AutoSeeded_RNG);
     }
 
-    void setup(Botan::RSA_PrivateKey *pk)
+    void setup(Botan::RSA_PublicKey *pk)
     {
         init_rng();
         if (pk) {
-            chenor::private_key = pk;
+            chenor::public_key = pk;
         } else {
-            chenor::private_key = new Botan::RSA_PrivateKey(*chenor::rng, 1024);
+            chenor::public_key = new Botan::RSA_PrivateKey(*chenor::rng, 1024);
         }
     }
 
