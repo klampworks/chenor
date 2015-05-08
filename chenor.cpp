@@ -11,7 +11,19 @@ using Botan::byte;
 namespace chenor {
 
     Botan::RSA_PublicKey *public_key;
-    std::unique_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
+    //std::shared_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
+    Botan::AutoSeeded_RNG *rng = nullptr;
+
+    Botan::AutoSeeded_RNG* get_rng()
+    {
+        if (!rng) {
+            //rng = std::shared_ptr<Botan::AutoSeeded_RNG>(
+             //   new Botan::AutoSeeded_RNG);
+            rng = new Botan::AutoSeeded_RNG;
+        }
+
+        return rng;
+    }
 
     ssize_t write(int fd, const void *buf, size_t count)
     {
@@ -24,7 +36,7 @@ namespace chenor {
 
             auto d = (en - st);
             d = d > 62 ? 62 : d;
-            enc += pke.encrypt(st, d, *chenor::rng);
+            enc += pke.encrypt(st, d, *get_rng());
             st += d;
         }
 
@@ -54,24 +66,28 @@ namespace chenor {
 
     void init_rng()
     {
-        //if (!rng)
-            rng = std::unique_ptr<Botan::AutoSeeded_RNG>(
-                new Botan::AutoSeeded_RNG);
+    }
+
+    void teardown()
+    {
+        delete chenor::rng;
+        chenor::rng = nullptr;
+
+    //    delete chenor::public_key;
+        chenor::public_key = nullptr;
     }
 
     void setup(Botan::RSA_PublicKey *pk)
     {
-        init_rng();
         if (pk) {
             chenor::public_key = pk;
         } else {
-            chenor::public_key = new Botan::RSA_PrivateKey(*chenor::rng, 1024);
+            chenor::public_key = new Botan::RSA_PrivateKey(*get_rng(), 1024);
         }
     }
 
     Botan::RSA_PrivateKey* gen_key()
     {
-        init_rng();
-        return new Botan::RSA_PrivateKey(*chenor::rng, 1024);
+        return new Botan::RSA_PrivateKey(*get_rng(), 1024);
     }
 }

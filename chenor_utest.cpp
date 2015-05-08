@@ -24,6 +24,8 @@ TEST_GROUP(chenor_write)
 
         delete write_buf;
         mock().clear();
+
+        chenor::teardown();
     }
 };
 

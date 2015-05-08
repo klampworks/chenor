@@ -4,9 +4,9 @@
 #include <vector>
 
 #include <botan/rsa.h>
+//#include <botan/auto_rng.h>
+
 namespace Botan {
-    //class RSA_PrivateKey;
-    //class RSA_PublicKey;
     class AutoSeeded_RNG;
 }
 
@@ -18,8 +18,10 @@ namespace chenor {
 
     // TODO, Find out why PublicKey destructors cause segfaults.
     extern Botan::RSA_PublicKey *public_key;
-    extern std::unique_ptr<Botan::AutoSeeded_RNG> rng;
+    //extern std::shared_ptr<Botan::AutoSeeded_RNG> rng;
+    extern Botan::AutoSeeded_RNG *rng;
     Botan::RSA_PrivateKey* gen_key();
 
     void setup(Botan::RSA_PublicKey *pk=nullptr);
+    void teardown();
 }
