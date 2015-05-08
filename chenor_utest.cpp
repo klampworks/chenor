@@ -6,6 +6,8 @@
 #include <cstring>
 #include <botan/init.h>
 
+Botan::LibraryInitializer botan_init;
+
 TEST_GROUP(chenor_write)
 {
     const std::vector<char> *write_buf;
@@ -90,7 +92,6 @@ TEST(chenor_write, test_how_mocks_work2)
 
 TEST(chenor_write, output_should_be_different_to_input)
 {
-    Botan::LibraryInitializer init;
     chenor::setup();
 
     char in[] = "hello world";
@@ -113,7 +114,6 @@ TEST(chenor_write, output_should_be_different_to_input)
 
 TEST(chenor_write, output_should_be_at_least_128_bytes)
 {
-    Botan::LibraryInitializer init;
     chenor::setup();
     char in[] = "hello world";
 
@@ -136,7 +136,6 @@ TEST(chenor_write, output_should_be_at_least_128_bytes)
 
 TEST(chenor_write, output_should_be_encrypted)
 {
-    Botan::LibraryInitializer init;
     chenor::setup();
 
     char in[] = "hello";
@@ -163,7 +162,6 @@ TEST(chenor_write, output_should_be_encrypted)
 
 TEST(chenor_write, output_should_be_encrypted_two_calls)
 {
-    Botan::LibraryInitializer init;
     chenor::setup();
 
     char in1[] = "hello";
@@ -200,7 +198,6 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
 
 TEST(chenor_write, input_larger_than_128)
 {
-    Botan::LibraryInitializer init;
     chenor::setup();
 
     std::vector<char> in;
@@ -224,7 +221,6 @@ TEST(chenor_write, input_larger_than_128)
 
 TEST(chenor_write, write_then_decrypt)
 {
-    Botan::LibraryInitializer init;
     const auto pk = chenor::gen_key();
     chenor::setup(pk);
 
@@ -248,7 +244,6 @@ TEST(chenor_write, write_then_decrypt)
 
 TEST(chenor_write, write_then_decrypt_long_string)
 {
-    Botan::LibraryInitializer init;
     const auto pk = chenor::gen_key();
     chenor::setup(pk);
 
