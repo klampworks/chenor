@@ -10,16 +10,14 @@ using Botan::byte;
 
 namespace chenor {
 
-    Botan::RSA_PublicKey *public_key;
-    //std::shared_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
-    Botan::AutoSeeded_RNG *rng = nullptr;
+    std::shared_ptr<Botan::RSA_PublicKey> public_key = nullptr;
+    std::shared_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
 
-    Botan::AutoSeeded_RNG* get_rng()
+    std::shared_ptr<Botan::AutoSeeded_RNG> get_rng()
     {
         if (!rng) {
-            //rng = std::shared_ptr<Botan::AutoSeeded_RNG>(
-             //   new Botan::AutoSeeded_RNG);
-            rng = new Botan::AutoSeeded_RNG;
+            rng = std::shared_ptr<Botan::AutoSeeded_RNG>(
+               new Botan::AutoSeeded_RNG);
         }
 
         return rng;
@@ -61,19 +59,20 @@ namespace chenor {
 
     void teardown()
     {
-        delete chenor::rng;
-        chenor::rng = nullptr;
+       // delete chenor::rng;
+        //chenor::rng = nullptr;
 
-        delete chenor::public_key;
-        chenor::public_key = nullptr;
+        //delete chenor::public_key;
+        //chenor::public_key = nullptr;
     }
 
     void setup(Botan::RSA_PublicKey *pk)
     {
         if (pk) {
-            chenor::public_key = pk;
+            chenor::public_key = std::shared_ptr<Botan::RSA_PublicKey>(pk);
         } else {
-            chenor::public_key = new Botan::RSA_PrivateKey(*get_rng(), 1024);
+            chenor::public_key = std::shared_ptr<Botan::RSA_PublicKey>(
+                new Botan::RSA_PrivateKey(*get_rng(), 1024));
         }
     }
 
