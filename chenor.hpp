@@ -14,7 +14,6 @@ namespace chenor {
 
     ssize_t write(int fd, const void *buf, size_t count);
     std::string decrypt(const std::vector<char> &in, Botan::RSA_PrivateKey *pk);
-    void init();
 
     // TODO, Find out why PublicKey destructors cause segfaults.
     extern Botan::RSA_PublicKey *public_key;

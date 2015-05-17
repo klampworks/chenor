@@ -59,21 +59,12 @@ namespace chenor {
         return ret;
     }
 
-    void init()
-    {
-
-    }
-
-    void init_rng()
-    {
-    }
-
     void teardown()
     {
         delete chenor::rng;
         chenor::rng = nullptr;
 
-    //    delete chenor::public_key;
+        delete chenor::public_key;
         chenor::public_key = nullptr;
     }
 
