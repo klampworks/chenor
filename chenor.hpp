@@ -3,10 +3,10 @@
 #include <string>
 #include <vector>
 
-#include <botan/rsa.h>
-
 namespace Botan {
     class AutoSeeded_RNG;
+    class RSA_PublicKey;
+    class RSA_PrivateKey;
 }
 
 namespace chenor {
@@ -18,5 +18,8 @@ namespace chenor {
     extern std::shared_ptr<Botan::AutoSeeded_RNG> rng;
     Botan::RSA_PrivateKey* gen_key();
 
+    //Since we are forward declaring these key types the compiler does not know
+    // that one inherits the other, hence we will overload the function.
+    void setup(Botan::RSA_PrivateKey *pk);
     void setup(Botan::RSA_PublicKey *pk=nullptr);
 }

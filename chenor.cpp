@@ -57,6 +57,11 @@ namespace chenor {
         return ret;
     }
 
+    void setup(Botan::RSA_PrivateKey *pk)
+    {
+        setup(static_cast<Botan::RSA_PublicKey*>(pk));
+    }
+
     void setup(Botan::RSA_PublicKey *pk)
     {
         if (pk) {
