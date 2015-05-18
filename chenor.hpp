@@ -19,5 +19,4 @@ namespace chenor {
     Botan::RSA_PrivateKey* gen_key();
 
     void setup(Botan::RSA_PublicKey *pk=nullptr);
-    void teardown();
 }

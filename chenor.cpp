@@ -57,15 +57,6 @@ namespace chenor {
         return ret;
     }
 
-    void teardown()
-    {
-       // delete chenor::rng;
-        //chenor::rng = nullptr;
-
-        //delete chenor::public_key;
-        //chenor::public_key = nullptr;
-    }
-
     void setup(Botan::RSA_PublicKey *pk)
     {
         if (pk) {
