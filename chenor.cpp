@@ -12,6 +12,7 @@ namespace chenor {
 
     std::shared_ptr<Botan::RSA_PublicKey> public_key = nullptr;
     std::shared_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
+    std::shared_ptr<Botan::PK_Encryptor_EME> pke = nullptr;
     const std::string eme("EME1(SHA-256)");
 
     std::shared_ptr<Botan::AutoSeeded_RNG> get_rng()
@@ -28,14 +29,13 @@ namespace chenor {
     {
         const byte *st = static_cast<const byte*>(buf);
         const byte *en = st+count;
-        Botan::PK_Encryptor_EME pke(*public_key, eme);
         Botan::SecureVector<byte> enc;
 
         while (st < en) {
 
             auto d = (en - st);
             d = d > 62 ? 62 : d;
-            enc += pke.encrypt(st, d, *get_rng());
+            enc += pke->encrypt(st, d, *get_rng());
             st += d;
         }
 
@@ -71,6 +71,9 @@ namespace chenor {
             chenor::public_key = std::shared_ptr<Botan::RSA_PublicKey>(
                 new Botan::RSA_PrivateKey(*get_rng(), 1024));
         }
+
+        pke = std::shared_ptr<Botan::PK_Encryptor_EME>(
+            new Botan::PK_Encryptor_EME(*public_key, eme));
     }
 
     Botan::RSA_PrivateKey* gen_key()
