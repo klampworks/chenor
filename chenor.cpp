@@ -44,15 +44,16 @@ namespace chenor {
 
     std::string decrypt(const std::vector<char> &in, Botan::RSA_PrivateKey *pk)
     {
+        const static size_t DECRYPT_BLOCK_MAX_SIZE = 128;
         Botan::PK_Decryptor_EME pkd(*pk, eme);
         auto st = (const byte*)(&in[0]);
         const auto en = st + in.size();
         std::string ret("");
 
         while (st < en) {
-            const auto dec = pkd.decrypt(st, 128);
+            const auto dec = pkd.decrypt(st, DECRYPT_BLOCK_MAX_SIZE);
             ret += std::string(dec.begin(), dec.end());
-            st += 128;
+            st += DECRYPT_BLOCK_MAX_SIZE;
         }
 
         return ret;
