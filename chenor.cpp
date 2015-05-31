@@ -27,6 +27,7 @@ namespace chenor {
 
     ssize_t write(int fd, const void *buf, size_t count)
     {
+        const static ssize_t ENCRYPT_BLOCK_MAX_SIZE = 62;
         const byte *st = static_cast<const byte*>(buf);
         const byte *en = st+count;
         Botan::SecureVector<byte> enc;
@@ -34,7 +35,7 @@ namespace chenor {
         while (st < en) {
 
             auto d = (en - st);
-            d = d > 62 ? 62 : d;
+            d = d > ENCRYPT_BLOCK_MAX_SIZE ? ENCRYPT_BLOCK_MAX_SIZE : d;
             enc += pke->encrypt(st, d, *get_rng());
             st += d;
         }
