@@ -3,7 +3,7 @@
 #include <vector>
 #include "write.hpp"
 
-ssize_t wwrite(int fd, const void *buf, size_t count)
+ssize_t wwrite(chenor *self, int fd, const void *buf, size_t count)
 {
     const auto cbuf = static_cast<const char*>(buf);
     auto v = new std::vector<char>(cbuf, cbuf + count);
@@ -16,4 +16,4 @@ ssize_t wwrite(int fd, const void *buf, size_t count)
         .returnIntValue();
 }
 
-ssize_t(*write_fp)(int fd, const void *buf, size_t count) = &wwrite;
+ssize_t(*write_fp)(chenor *self, int fd, const void *buf, size_t count) = &wwrite;

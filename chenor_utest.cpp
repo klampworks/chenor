@@ -90,7 +90,7 @@ TEST(chenor_write, test_how_mocks_work2)
 
 TEST(chenor_write, output_should_be_different_to_input)
 {
-    chenor::setup();
+    chenor c;
 
     char in[] = "hello world";
 
@@ -99,7 +99,7 @@ TEST(chenor_write, output_should_be_different_to_input)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 128);
 
-    chenor::write(1, in, sizeof in);
+    c.write(1, in, sizeof in);
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
@@ -112,7 +112,7 @@ TEST(chenor_write, output_should_be_different_to_input)
 
 TEST(chenor_write, output_should_be_at_least_128_bytes)
 {
-    chenor::setup();
+    chenor c;
     char in[] = "hello world";
 
     CHECK(strlen(in) < 128);
@@ -122,7 +122,7 @@ TEST(chenor_write, output_should_be_at_least_128_bytes)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 128);
 
-    chenor::write(1, in, sizeof in);
+    c.write(1, in, sizeof in);
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
@@ -134,7 +134,7 @@ TEST(chenor_write, output_should_be_at_least_128_bytes)
 
 TEST(chenor_write, output_should_be_encrypted)
 {
-    chenor::setup();
+    chenor c;
 
     char in[] = "hello";
 
@@ -143,7 +143,7 @@ TEST(chenor_write, output_should_be_encrypted)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 128);
 
-    chenor::write(1, in, sizeof in);
+    c.write(1, in, sizeof in);
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
@@ -160,7 +160,7 @@ TEST(chenor_write, output_should_be_encrypted)
 
 TEST(chenor_write, output_should_be_encrypted_two_calls)
 {
-    chenor::setup();
+    chenor c;
 
     char in1[] = "hello";
 
@@ -169,7 +169,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 128);
 
-    chenor::write(1, in1, sizeof in1);
+    c.write(1, in1, sizeof in1);
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
@@ -184,7 +184,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
         .withParameter("fd", 1)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 128);
-    chenor::write(1, in2, sizeof in2);
+    c.write(1, in2, sizeof in2);
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
@@ -196,7 +196,7 @@ TEST(chenor_write, output_should_be_encrypted_two_calls)
 
 TEST(chenor_write, input_larger_than_128)
 {
-    chenor::setup();
+    chenor c;
 
     std::vector<char> in;
     for (int i = 0; i < 150; ++i)
@@ -207,7 +207,7 @@ TEST(chenor_write, input_larger_than_128)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 384);
 
-    chenor::write(1, &in[0], in.size());
+    c.write(1, &in[0], in.size());
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
@@ -220,7 +220,7 @@ TEST(chenor_write, input_larger_than_128)
 TEST(chenor_write, write_then_decrypt)
 {
     const auto pk = chenor::gen_key();
-    chenor::setup(pk);
+    chenor c(pk);
 
     std::string in("hello");
 
@@ -229,21 +229,21 @@ TEST(chenor_write, write_then_decrypt)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 128);
 
-    chenor::write(1, in.c_str(), in.size());
+    c.write(1, in.c_str(), in.size());
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::vector<char>(write_buf->begin(), write_buf->end());
-    const auto dec = chenor::decrypt(out, pk);
+    const auto dec = c.decrypt(out, pk);
     CHECK_EQUAL(in, dec);
 }
 
 TEST(chenor_write, write_then_decrypt_long_string)
 {
     const auto pk = chenor::gen_key();
-    chenor::setup(pk);
+    chenor c(pk);
 
     std::string in("After a failed attempt to foil Sephiroth's theft of the Black Materia, Aerith ventures alone into the Forgotten City. Cloud and his companions give chase, eventually finding her praying at an altar. As Aerith looks up to smile at Cloud, Sephiroth appears and ");
 
@@ -252,14 +252,14 @@ TEST(chenor_write, write_then_decrypt_long_string)
         .withParameter("buf", static_cast<const void*>(nullptr))
         .withParameter("count", 640);
 
-    chenor::write(1, in.c_str(), in.size());
+    c.write(1, in.c_str(), in.size());
     mock().checkExpectations();
 
     write_buf = static_cast<const std::vector<char>*>(
         mock().getData("write_buf").getObjectPointer());
 
     const auto out = std::vector<char>(write_buf->begin(), write_buf->end());
-    const auto dec = chenor::decrypt(out, pk);
+    const auto dec = c.decrypt(out, pk);
     CHECK_EQUAL(in, dec);
 }
 
