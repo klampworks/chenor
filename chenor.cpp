@@ -8,13 +8,6 @@
 
 using Botan::byte;
 
-//namespace chenor {
-
-//    std::shared_ptr<Botan::RSA_PublicKey> public_key = nullptr;
-//    std::shared_ptr<Botan::AutoSeeded_RNG> rng = nullptr;
-//    std::shared_ptr<Botan::PK_Encryptor_EME> pke = nullptr;
-//    const std::string eme("EME1(SHA-256)");
-
 std::shared_ptr<Botan::AutoSeeded_RNG> chenor::get_rng()
 {
     if (!rng) {
@@ -66,7 +59,7 @@ chenor::chenor(Botan::RSA_PrivateKey *pk)
 }
 
 chenor::chenor(Botan::RSA_PublicKey *pk)
-    : public_key(nullptr), rng(nullptr), pke(nullptr), eme("EME1(SHA-256)")
+    : rng(nullptr), eme("EME1(SHA-256)")
 {
     if (pk) {
         chenor::public_key = std::shared_ptr<Botan::RSA_PublicKey>(pk);
