@@ -8,16 +8,6 @@
 
 using Botan::byte;
 
-std::shared_ptr<Botan::AutoSeeded_RNG> chenor::get_rng()
-{
-    if (!rng) {
-        rng = std::shared_ptr<Botan::AutoSeeded_RNG>(
-           new Botan::AutoSeeded_RNG);
-    }
-
-    return rng;
-}
-
 ssize_t chenor::write(int fd, const void *buf, size_t count)
 {
     const static ssize_t ENCRYPT_BLOCK_MAX_SIZE = 62;
@@ -29,7 +19,7 @@ ssize_t chenor::write(int fd, const void *buf, size_t count)
 
         auto d = (en - st);
         d = d > ENCRYPT_BLOCK_MAX_SIZE ? ENCRYPT_BLOCK_MAX_SIZE : d;
-        enc += pke->encrypt(st, d, *get_rng());
+        enc += pke->encrypt(st, d, *rng);
         st += d;
     }
 
@@ -59,13 +49,15 @@ chenor::chenor(Botan::RSA_PrivateKey *pk)
 }
 
 chenor::chenor(Botan::RSA_PublicKey *pk)
-    : rng(nullptr), eme("EME1(SHA-256)")
+    : eme("EME1(SHA-256)")
 {
+    rng = std::shared_ptr<Botan::AutoSeeded_RNG>(new Botan::AutoSeeded_RNG);
+
     if (pk) {
         chenor::public_key = std::shared_ptr<Botan::RSA_PublicKey>(pk);
     } else {
         chenor::public_key = std::shared_ptr<Botan::RSA_PublicKey>(
-            new Botan::RSA_PrivateKey(*get_rng(), 1024));
+            new Botan::RSA_PrivateKey(*rng, 1024));
     }
 
     pke = std::shared_ptr<Botan::PK_Encryptor_EME>(

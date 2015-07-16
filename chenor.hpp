@@ -25,6 +25,6 @@ class chenor {
     std::shared_ptr<Botan::RSA_PublicKey> public_key;
     std::shared_ptr<Botan::AutoSeeded_RNG> rng;
     std::shared_ptr<Botan::PK_Encryptor_EME> pke;
-    std::shared_ptr<Botan::AutoSeeded_RNG> get_rng();
     std::string eme;
+
 };
